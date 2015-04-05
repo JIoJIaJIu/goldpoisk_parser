@@ -15,7 +15,7 @@ public class Sunlight {
 	static String category="";
 	final String siteName="http://www.love-sl.ru";
 	int productid=0;
-
+	final String databaseName="sunlight_earring";
 	
 	public Sunlight(){
 		
@@ -74,7 +74,7 @@ public class Sunlight {
 			
 			String lastPageURL=lastPage.attr("href");
 			
-			Database database = new Database("sunlight_rings");
+			Database database = new Database(databaseName);
 			
 			boolean end=false;
 			do{
@@ -112,6 +112,7 @@ public class Sunlight {
 						String old_price="";
 						try{
 							old_price = price.getElementsByTag("s").get(0).text();
+							new_price = new_price.substring(0, new_price.length()-1);
 						}catch(Exception e){
 							old_price="";
 						}
@@ -123,15 +124,18 @@ public class Sunlight {
 						Element detail = object_document.getElementsByClass("detail_info").get(0);
 						String[] description = detail.getElementsByClass("text").get(1).html().split("<br />");
 						
-						for(int k=0;k<description.length;k++){	
-							if(description[k].toLowerCase().contains("тип".toLowerCase()))
-								ring.category=description[k];
-							else if(description[k].toLowerCase().contains("Металл".toLowerCase()))
-								ring.material=description[k];
-							else if(description[k].toLowerCase().contains("Вес изделия".toLowerCase()))
-								ring.weight=description[k];
-							else if(description[k].toLowerCase().contains("Проба".toLowerCase())){
-								ring.proba=description[k];
+						ring.description=detail.getElementsByTag("h2").get(0).text();
+						
+						for(int k=0;k<description.length;k++){
+							String[] parts=description[k].split(":");
+							if(parts[0].toLowerCase().contains("тип".toLowerCase()))
+								ring.category=parts[1];
+							else if(parts[0].toLowerCase().contains("Металл".toLowerCase()) && !parts[0].toLowerCase().contains("цвет".toLowerCase()))
+								ring.material=parts[1];
+							else if(parts[0].toLowerCase().contains("Вес изделия".toLowerCase()))
+								ring.weight=parts[1];
+							else if(parts[0].toLowerCase().contains("Проба".toLowerCase())){
+								ring.proba=parts[1];
 							}
 						}
 						
