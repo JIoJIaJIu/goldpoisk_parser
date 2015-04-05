@@ -5,23 +5,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Ring {
-	String article;
-	String name;
-	String material;
-	String category;
-	String weight;
-	String url;
-	String proba;
-	String type;
+	String article="";;
+	String name="";
+	String material="";
+	String category="";
+	String weight="";
+	String url="";
+	String proba="";
+	String type="";
 	ArrayList<String> kamni = new ArrayList<String>();
 	ArrayList<String> kamniColor = new ArrayList<String>();
 	ArrayList<String> kamniWeight = new ArrayList<String>();
 	ArrayList<String> kamniSize= new ArrayList<String>();
 	ArrayList<ByteArrayOutputStream> images= new ArrayList<ByteArrayOutputStream>();
-	String price;
+	String price="";;
 	String description="";
 	String old_price="";
 	String discount="";
+	String count="-1";
 	
 	String watch_material;
 	String watch_material_body;
