@@ -1,4 +1,4 @@
-package goldpoisk_parser;
+﻿package goldpoisk_parser;
 
 public class Valtera {
 

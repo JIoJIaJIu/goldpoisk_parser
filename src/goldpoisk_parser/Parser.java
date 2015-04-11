@@ -1,6 +1,7 @@
-package goldpoisk_parser;
+﻿package goldpoisk_parser;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Parser {
 	
@@ -11,8 +12,23 @@ public class Parser {
 	
 	public Parser(){
 		
-		ftp=new Ftp("https://web456.webfaction.com","gpfrontend","QhCAWpR28kxoS");
+		/*
+		 *  Эту грязь переделаю в следующем коммите=)
+		 */
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Введите ftp адрес");
+		String address=scanner.nextLine();
+		System.out.println("Введите ftp логин");
+		String username=scanner.nextLine();
+		System.out.println("Введите ftp пароль");
+		String password=scanner.nextLine();
+		
+		ftp=new Ftp(address,username,password);
+		
 		if(ftp.connect()){
+			/*
+			 * Выбор по сайтам в следующем коммите
+			 */
 			/*ftp.makeDir("sunlight");
 			sunlight=new Sunlight();
 			sunlight.parse();*/

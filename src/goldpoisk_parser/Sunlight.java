@@ -1,4 +1,4 @@
-package goldpoisk_parser;
+п»їpackage goldpoisk_parser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -25,15 +25,15 @@ public class Sunlight {
 		int id=0;
 		category=category.toLowerCase();
 		switch(category){
-			case "серьги": id=4; break;
-			case "кольца": id=5; break;
-			case "подвески": id=8; break;
-			case "браслеты": id=317; break;
-			case "цепи": id=319; break;
-			case "колье": id=365; break;
-			case "брошь": id=366; break;
-			case "часы": id=318; break;
-			case "пирсинг": id=478; break;
+			case "СЃРµСЂСЊРіРё": id=4; break;
+			case "РєРѕР»СЊС†Р°": id=5; break;
+			case "РїРѕРґРІРµСЃРєРё": id=8; break;
+			case "Р±СЂР°СЃР»РµС‚С‹": id=317; break;
+			case "С†РµРїРё": id=319; break;
+			case "РєРѕР»СЊРµ": id=365; break;
+			case "Р±СЂРѕС€СЊ": id=366; break;
+			case "С‡Р°СЃС‹": id=318; break;
+			case "РїРёСЂСЃРёРЅРі": id=478; break;
 			default: break;
 		}
 		
@@ -51,12 +51,12 @@ public class Sunlight {
 		int count=0;
 		
 		do{
-			System.out.println("Введите категорию изделий для "+siteName+". Например: Серьги");
+			System.out.println("Р’РІРµРґРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ РёР·РґРµР»РёР№ РґР»СЏ "+siteName+". РќР°РїСЂРёРјРµСЂ: РЎРµСЂСЊРіРё");
 			category=scanner.nextLine();
 			productid=getProductId(category);
 		}while(productid==0);
 		
-		System.out.println("Введите timeout подключения. По умолчанию 30000 (30с)");
+		System.out.println("Р’РІРµРґРёС‚Рµ timeout РїРѕРґРєР»СЋС‡РµРЅРёСЏ. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ 30000 (30СЃ)");
 		timeout=scanner.nextInt();
 		
 		scanner.close();
@@ -128,13 +128,13 @@ public class Sunlight {
 						
 						for(int k=0;k<description.length;k++){
 							String[] parts=description[k].split(":");
-							if(parts[0].toLowerCase().contains("тип".toLowerCase()))
+							if(parts[0].toLowerCase().contains("С‚РёРї".toLowerCase()))
 								ring.category=parts[1];
-							else if(parts[0].toLowerCase().contains("Металл".toLowerCase()) && !parts[0].toLowerCase().contains("цвет".toLowerCase()))
+							else if(parts[0].toLowerCase().contains("РњРµС‚Р°Р»Р»".toLowerCase()) && !parts[0].toLowerCase().contains("С†РІРµС‚".toLowerCase()))
 								ring.material=parts[1];
-							else if(parts[0].toLowerCase().contains("Вес изделия".toLowerCase()))
+							else if(parts[0].toLowerCase().contains("Р’РµСЃ РёР·РґРµР»РёСЏ".toLowerCase()))
 								ring.weight=parts[1];
-							else if(parts[0].toLowerCase().contains("Проба".toLowerCase())){
+							else if(parts[0].toLowerCase().contains("РџСЂРѕР±Р°".toLowerCase())){
 								ring.proba=parts[1];
 							}
 						}
@@ -170,13 +170,13 @@ public class Sunlight {
 				doc = Jsoup.connect(siteName+"/catalog/?product_type="+productid+"&page="+pageid).timeout(timeout).get();
 			}while(!end);
 			
-			System.out.println("Выгрузка завершена");
-			System.out.println("Выгружено: "+count);
-			System.out.println("С ошибкой: "+error_count);
+			System.out.println("Р’С‹РіСЂСѓР·РєР° Р·Р°РІРµСЂС€РµРЅР°");
+			System.out.println("Р’С‹РіСЂСѓР¶РµРЅРѕ: "+count);
+			System.out.println("РЎ РѕС€РёР±РєРѕР№: "+error_count);
 			Parser.ftp.saveFile(category, database.sql_query);
 			
 		}catch(Exception e){
-			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
+			System.out.println("РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє СЃР°Р№С‚Сѓ. РџСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ РІРІРѕРґР° РєР°С‚РµРіРѕСЂРёРё РёР»Рё СѓРІРµР»РёС‡СЊС‚Рµ timeout");
 		}
 		
 	}

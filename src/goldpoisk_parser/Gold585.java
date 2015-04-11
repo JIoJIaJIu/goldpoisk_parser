@@ -1,4 +1,4 @@
-package goldpoisk_parser;
+п»їpackage goldpoisk_parser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -30,10 +30,10 @@ public class Gold585 {
 		int count=0;
 		
 		
-		System.out.println("Введите категорию изделий для "+siteName+". Например: rings");
+		System.out.println("Р’РІРµРґРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ РёР·РґРµР»РёР№ РґР»СЏ "+siteName+". РќР°РїСЂРёРјРµСЂ: rings");
 		category=scanner.nextLine();
 		
-		System.out.println("Введите timeout подключения. По умолчанию 30000 (30с)");
+		System.out.println("Р’РІРµРґРёС‚Рµ timeout РїРѕРґРєР»СЋС‡РµРЅРёСЏ. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ 30000 (30СЃ)");
 		timeout=scanner.nextInt();
 		
 		scanner.close();
@@ -48,7 +48,7 @@ public class Gold585 {
 			Element ul = doc.body().getElementById("catlist");
 			Elements li = ul.getElementsByTag("li");
 			
-			System.out.println("Изделий найдено "+String.valueOf(li.size()));
+			System.out.println("РР·РґРµР»РёР№ РЅР°Р№РґРµРЅРѕ "+String.valueOf(li.size()));
 			
 			for(int i=0;i<li.size();i++){
 				try{
@@ -63,7 +63,7 @@ public class Gold585 {
 					
 					try{
 						String string=elementArticle.text();
-						int index=string.indexOf("№");
+						int index=string.indexOf("в„–");
 						String name=string.substring(0,index);
 						index+=2;
 						String article="";
@@ -78,9 +78,9 @@ public class Gold585 {
 							ring.name=name;
 							ring.url="http://www.gold585.ru"+href;
 							
-							if(name.toLowerCase().contains("цепь".toLowerCase()))
+							if(name.toLowerCase().contains("С†РµРїСЊ".toLowerCase()))
 								ring.type="chains";
-							else if(name.toLowerCase().contains("браслет".toLowerCase()))
+							else if(name.toLowerCase().contains("Р±СЂР°СЃР»РµС‚".toLowerCase()))
 								ring.type="bracelets";
 							else
 								ring.type=category;
@@ -103,53 +103,53 @@ public class Gold585 {
 								for(int j=0;j<elementCharacterLi.size();j++){
 									String text = elementCharacterLi.get(j).text();
 									String[] parts = text.split(":");
-									if(parts[0].toLowerCase().contains("Изделие".toLowerCase()))
+									if(parts[0].toLowerCase().contains("РР·РґРµР»РёРµ".toLowerCase()))
 										ring.category=parts[1];
-									else if(parts[0].toLowerCase().contains("Металл".toLowerCase()))
+									else if(parts[0].toLowerCase().contains("РњРµС‚Р°Р»Р»".toLowerCase()))
 										ring.material=parts[1];
-									else if(parts[0].toLowerCase().contains("Вес изделия".toLowerCase()))
+									else if(parts[0].toLowerCase().contains("Р’РµСЃ РёР·РґРµР»РёСЏ".toLowerCase()))
 										ring.weight=parts[1];
-									else if(parts[0].toLowerCase().contains("Вставка".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("Р’СЃС‚Р°РІРєР°".toLowerCase())){
 										String [] kamni = parts[1].split(",");
 										for(int z=0;z<kamni.length;z++){
 											ring.addKamni(kamni[z]);
 										}
 									}
-									else if(parts[0].toLowerCase().contains("Вес камней".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("Р’РµСЃ РєР°РјРЅРµР№".toLowerCase())){
 										String [] kamni = parts[1].split(";");
 										for(int z=0;z<kamni.length;z++){
 											ring.addKamniWeight(kamni[z]);
 										}
 									}
-									else if(parts[0].toLowerCase().contains("Чистота".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("Р§РёСЃС‚РѕС‚Р°".toLowerCase())){
 										String [] kamni = parts[1].split(";");
 										for(int z=0;z<kamni.length;z++){
 											ring.addKamniColor(kamni[z]);
 										}
 									}
-									else if(parts[0].toLowerCase().contains("Диаметр камней".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("Р”РёР°РјРµС‚СЂ РєР°РјРЅРµР№".toLowerCase())){
 										String [] kamni = parts[1].split(";");
 										for(int z=0;z<kamni.length;z++){
 											ring.addKamniSize(kamni[z]);
 										}
 									}
-									else if(parts[0].toLowerCase().contains("Проба".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РџСЂРѕР±Р°".toLowerCase())){
 										ring.proba=parts[1];
 									}
 									//////
-									else if(parts[0].toLowerCase().contains("Материал браслета".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РњР°С‚РµСЂРёР°Р» Р±СЂР°СЃР»РµС‚Р°".toLowerCase())){
 										ring.watch_material=parts[1];
 									}
-									else if(parts[0].toLowerCase().contains("Материал корпуса".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РњР°С‚РµСЂРёР°Р» РєРѕСЂРїСѓСЃР°".toLowerCase())){
 										ring.watch_material_body=parts[1];
 									}
-									else if(parts[0].toLowerCase().contains("Стекло".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РЎС‚РµРєР»Рѕ".toLowerCase())){
 										ring.watch_glass=parts[1];
 									}
-									else if(parts[0].toLowerCase().contains("Тип".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РўРёРї".toLowerCase())){
 										ring.watch_type=parts[1];
 									}
-									else if(parts[0].toLowerCase().contains("Механизм".toLowerCase())){
+									else if(parts[0].toLowerCase().contains("РњРµС…Р°РЅРёР·Рј".toLowerCase())){
 										ring.watch_mechanic=parts[1];
 									}
 										//System.out.println(elementCharacterLi.get(j).text());
@@ -190,13 +190,13 @@ public class Gold585 {
 				
 			}
 			
-			System.out.println("Выгрузка завершена");
-			System.out.println("Выгружено: "+count);
-			System.out.println("С ошибкой: "+error_count);
+			System.out.println("Р’С‹РіСЂСѓР·РєР° Р·Р°РІРµСЂС€РµРЅР°");
+			System.out.println("Р’С‹РіСЂСѓР¶РµРЅРѕ: "+count);
+			System.out.println("РЎ РѕС€РёР±РєРѕР№: "+error_count);
 
 			Parser.ftp.saveFile(category, database.sql_query);
 		}catch(Exception e){
-			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
+			System.out.println("РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє СЃР°Р№С‚Сѓ. РџСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ РІРІРѕРґР° РєР°С‚РµРіРѕСЂРёРё РёР»Рё СѓРІРµР»РёС‡СЊС‚Рµ timeout");
 		}
 		
 	}

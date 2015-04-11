@@ -1,4 +1,4 @@
-package goldpoisk_parser;
+п»їpackage goldpoisk_parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -47,7 +47,7 @@ public class Ftp {
 			client.setFileType(FTP.BINARY_FILE_TYPE);
 			status=true;
 		} catch (Exception e) {
-			System.out.println("Ошибка подключения к ftp серверу");
+			System.out.println("РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє ftp СЃРµСЂРІРµСЂСѓ");
 		}
 		
 		return status;
@@ -74,7 +74,7 @@ public class Ftp {
 			 client.changeWorkingDirectory(dirname);
 			 status=true;
 		}catch(Exception e){
-			System.out.println("Ошибка! Не удалось создать каталог "+dirname+" в директории "+siteName);
+			System.out.println("РћС€РёР±РєР°! РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РєР°С‚Р°Р»РѕРі "+dirname+" РІ РґРёСЂРµРєС‚РѕСЂРёРё "+siteName);
 		}
 		
 		return status;
@@ -83,7 +83,7 @@ public class Ftp {
 	boolean saveFile(String filename,final String string){
 		
 		boolean status=false;
-		System.out.println("Запись дампа на ftp сервер...");
+		System.out.println("Р—Р°РїРёСЃСЊ РґР°РјРїР° РЅР° ftp СЃРµСЂРІРµСЂ...");
          InputStream stream = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
          try{
         	
@@ -96,7 +96,7 @@ public class Ftp {
 
         		      int current_percent = (int)(totalBytesTransferred*100/string.length());
         		      if(current_percent>=percent+10){
-        		    	  System.out.println("Процесс "+percent);
+        		    	  System.out.println("РџСЂРѕС†РµСЃСЃ "+percent);
         		    	  percent=current_percent;
         		      }
         		    }
@@ -104,10 +104,10 @@ public class Ftp {
         		 };
     		 client.setCopyStreamListener(streamListener);
     		 client.storeFile(filename+".sql", stream);
-        	 System.out.println("Файл успешно записан!");
+        	 System.out.println("Р¤Р°Р№Р» СѓСЃРїРµС€РЅРѕ Р·Р°РїРёСЃР°РЅ!");
         	 status=true;
          }catch(Exception e){
-        	 System.out.println("Ошибка! Не удалось сохранить файл "+filename+".sql");
+        	 System.out.println("РћС€РёР±РєР°! РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р» "+filename+".sql");
          }
          
          
