@@ -1,4 +1,4 @@
-﻿package goldpoisk_parser;
+package goldpoisk_parser;
 
 import java.io.IOException;
 import java.util.Scanner;

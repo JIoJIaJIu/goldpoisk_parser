@@ -1,4 +1,4 @@
-﻿package goldpoisk_parser;
+package goldpoisk_parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
