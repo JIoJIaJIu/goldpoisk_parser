@@ -7,7 +7,6 @@ public class Parser {
 	
 	Gold585 gold585;
 	Sunlight sunlight;
-	Valtera valtera;
 	static Ftp ftp;
 	
 	public Parser(){

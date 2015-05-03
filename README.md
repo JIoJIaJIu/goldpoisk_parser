@@ -1,4 +1,12 @@
-﻿# Goldpoisk Parser gold585.ru
+﻿# Goldpoisk Parser
+
+### Установка
+* `mvn install`
+
+### Зависимости
+* [Maven](http://maven.apache.org/index.html)
+* > JDK 1.7
+
 ---
 ### Запуск
 ---

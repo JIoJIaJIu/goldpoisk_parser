@@ -21,14 +21,13 @@ public class Database {
 	    }
 	    
 	    void openDatabaseStructure(){
-	    	try (BufferedReader br = new BufferedReader(new FileReader("files/goldpoisk_template.sql"))) {
-	    	    String line="";
-	    	    while ((line = br.readLine()) != null) {
-	    	    	 sql_query+=line;
-	    	    }
-	    	}catch(Exception e){
-	    		System.out.println("Îøèáêà! Íå óäàëîñü îòêðûòü ôàéë ñî ñòðóêòóðàìè òàáëèö ÁÄ.");
-	    	}
+            try (BufferedReader buf = new BufferedReader(new FileReader("files/goldpoisk_template.sql")) ) {
+                String line = "";
+
+                while ((line = buf.readLine()) != null) {
+                     sql_query += line;
+                }
+            } catch (Exception e) {}
 	    }
 	    
 	   /* void savePrice(Ring ring){
