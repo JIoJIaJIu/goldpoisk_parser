@@ -20,8 +20,8 @@ public class Database {
 	    java.sql.Connection conn = null;
 	    Statement stmt = null;
 	    
-	    public Database(){
-	    	DB_URL+=Parser.category;
+	    public Database(String category){
+	    	DB_URL+=category;
 	    	try {
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -77,9 +77,9 @@ public class Database {
 	    void save(Ring ring){
 	  
 		    	String query="INSERT INTO goldpoisk_entity"+
-		    			" (article,name,material,category,weight,url,proba,type,price,description,old_price,discount)"+
+		    			" (article,name,material,category,weight,url,proba,type,price,description,old_price,discount,count)"+
 		    			" VALUES "+
-		    			" (?,?,?,?,?,?,?,?,?,?,?,?)";
+		    			" (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		    	try {
 					PreparedStatement preparedStmt = conn.prepareStatement(query);
 					preparedStmt.setString (1, ring.article);
@@ -94,6 +94,7 @@ public class Database {
 					preparedStmt.setString (10, ring.description);
 					preparedStmt.setString (11, ring.old_price);
 					preparedStmt.setString (12, ring.discount);
+					preparedStmt.setString (13, ring.count);
 					preparedStmt.execute();
 				} catch (SQLException e) {
 					e.printStackTrace();
