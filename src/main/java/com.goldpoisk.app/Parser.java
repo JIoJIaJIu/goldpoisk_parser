@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Parser {
-	
 	Gold585 gold585;
 	Sunlight sunlight;
 	static Ftp ftp;
-	
+
 	public Parser(){
-		
 		/*
 		 *  Эту грязь переделаю в следующем коммите=)
 		 */
@@ -21,10 +19,10 @@ public class Parser {
 		String username=scanner.nextLine();
 		System.out.println("Введите ftp пароль");
 		String password=scanner.nextLine();
-		
+
 		ftp=new Ftp(address,username,password);
-		
-		if(ftp.connect()){
+
+		if (ftp.connect()) {
 			/*
 			 * Выбор по сайтам в следующем коммите
 			 */
@@ -34,11 +32,9 @@ public class Parser {
 			ftp.makeDir("gold585");
 			gold585 = new Gold585();
 			gold585.parse();
-			
 		}
-		
 	}
-	
+
 	public static void main(String[] args) throws IOException{
 		Parser parser = new Parser();
 	}
