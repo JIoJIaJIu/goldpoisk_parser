@@ -1,7 +1,10 @@
 ﻿# Goldpoisk Parser
 
 ### Установка
-* `mvn install`
+* `mvn package`
+
+### Запуск
+* `mvn exec:java -Dexec.mainClass=goldpoisk_parser.Parser`
 
 ### Зависимости
 * [Maven](http://maven.apache.org/index.html)

@@ -1,17 +1,17 @@
 package goldpoisk_parser;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
+
+import org.ini4j.Ini;
 
 public class Parser {
 	Gold585 gold585;
 	Sunlight sunlight;
 	static Ftp ftp;
 
-	public Parser(){
-		/*
-		 *  Эту грязь переделаю в следующем коммите=)
-		 */
+	public Parser() throws FileNotFoundException, IOException {
+        init();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Введите ftp адрес");
 		String address=scanner.nextLine();
@@ -33,9 +33,21 @@ public class Parser {
 			gold585 = new Gold585();
 			gold585.parse();
 		}
+
 	}
 
-	public static void main(String[] args) throws IOException{
+    void init() throws FileNotFoundException, IOException {
+        File file = new File("development.ini");
+        Ini ini = new Ini(new FileReader(file));
+        Ini.Section pack = ini.get("package");
+
+        String name = pack.get("name");
+        String version = pack.get("version");
+        System.out.println("Name: " + name);
+        System.out.println("Version: " + version);
+    }
+
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Parser parser = new Parser();
 	}
 }
