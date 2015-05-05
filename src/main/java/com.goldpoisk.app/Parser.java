@@ -5,12 +5,18 @@ import java.util.Scanner;
 
 import org.ini4j.Ini;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 public class Parser {
 	Gold585 gold585;
 	Sunlight sunlight;
 	static Ftp ftp;
+    static Logger logger = LogManager.getLogger(Parser.class.getName());
 
 	public Parser() throws FileNotFoundException, IOException {
+        logger.info("Constructing");
+
         init();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Введите ftp адрес");
