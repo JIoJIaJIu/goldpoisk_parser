@@ -10,20 +10,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Sunlight {
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+public class Sunlight implements IStore {
+
+    String category="";
+    final String siteName="http://www.love-sl.ru";
+    final String databaseName="sunlight_earring";
+    static Logger logger = LogManager.getLogger(Sunlight.class);
+    int productid=0;
+
+	public Sunlight() {}
+
+    // IStore
+    public void parsePage(String url) {
+        logger.info("parsePage {}", url);
+    }
 	
-	String category="";
-	final String siteName="http://www.love-sl.ru";
-	int productid=0;
-	final String databaseName="sunlight_earring";
-	
-	public Sunlight(){
-		
-	}
-	
-	int getProductId(String category){
-		int id=0;
+	int getProductId(String category) {
+		int id = 0;
 		category=category.toLowerCase();
+
 		switch(category){
 			case "серьги": id=4; break;
 			case "кольца": id=5; break;
@@ -36,12 +44,10 @@ public class Sunlight {
 			case "пирсинг": id=478; break;
 			default: break;
 		}
-		
 		return id;
 	}
 	
 	void parse(){
-		
 		final String slash="/";
 		int error_count=0;
 		int timeout=30000;
