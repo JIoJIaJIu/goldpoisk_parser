@@ -2,6 +2,8 @@ package goldpoisk_parser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -15,17 +17,108 @@ import org.apache.logging.log4j.LogManager;
 
 public class Sunlight implements IStore {
 
-    String category="";
+    String category = "";
     final String siteName="http://www.love-sl.ru";
     final String databaseName="sunlight_earring";
     static Logger logger = LogManager.getLogger(Sunlight.class);
-    int productid=0;
+    static int timeout = 30000; // ms
+    int productid = 0;
 
-	public Sunlight() {}
+    public Sunlight() {}
 
     // IStore
-    public void parsePage(String url) {
+    public Ring parsePage(String article, String name, String url) throws Exception {
         logger.info("parsePage {}", url);
+        logger.info("article: {} name: {}", article, name);
+        // TODO: rename
+        Ring product = new Ring();
+
+        product.article = article;
+        product.name = name;
+        product.url = url;
+        int count = -1;
+
+        Document doc = Jsoup.connect(url).timeout(timeout).get();
+        Element price = doc.getElementsByClass("price").get(0);
+        String newPrice = "";
+        String oldPrice="";
+
+        try {
+            newPrice = price.getElementsByTag("span").get(0).text();
+        } catch (Exception e) {
+            newPrice = "";
+            count = 0;
+        }
+
+        try {
+            oldPrice = price.getElementsByTag("s").get(0).text();
+            newPrice = newPrice.substring(0, newPrice.length() - 1);
+        } catch (Exception e) {
+            oldPrice = "";
+        }
+
+        logger.info("Setting count: {} newPrice: {} oldPrice: {}", count, newPrice, oldPrice);
+        product.count = String.valueOf(count);
+        product.price = newPrice;
+        product.old_price = oldPrice;
+
+        Element detail = doc.getElementsByClass("detail_info").get(0);
+        String[] description = detail.getElementsByClass("text").get(1).html().split("<br />");
+
+        product.description = detail.getElementsByTag("h2").get(0).text();
+
+        for (int i = 0; i < description.length; i++) {
+            String[] parts = description[i].split(":");
+            String part = parts[0].toLowerCase();
+            String value = parts[1].toLowerCase();
+
+            if (part.contains("тип")) {
+                logger.info("Founded category: {}", value);
+                product.category = value;
+
+            } else if (part.contains("металл") &&
+                      !part.contains("цвет")) {
+                logger.info("Founded material: {}", value);
+                product.material = value;
+
+            } else if(part.contains("вес изделия")) {
+                logger.info("Founded weight: {}", value);
+                product.weight = value;
+
+            } else if(part.contains("проба")) {
+                logger.info("Founded material: {}", value);
+                product.proba = value;
+            }
+        }
+
+        Element imgElement = doc.getElementsByClass("smallPics").first();
+        Elements images = imgElement.getElementsByTag("img");
+
+        for (int i = 0; i < images.size(); i++) {
+            String imageUrl = images.get(i).attr("data-src");
+            ByteArrayOutputStream blob = loadImage(imageUrl);
+            product.addImage(blob);
+        }
+
+        return product;
+    }
+
+    public ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
+                                                              IOException {
+        logger.debug("Loading image {}", url);
+
+        URL imageUrl = new URL(url);
+        InputStream image = imageUrl.openStream();
+        ByteArrayOutputStream blob = new ByteArrayOutputStream();
+
+        byte[] byteChunk = new byte[4096];
+        int n;
+
+        while ( (n = image.read(byteChunk)) > 0 ) {
+            blob.write(byteChunk, 0, n);
+        }
+
+        return blob;
     }
 	
 	int getProductId(String category) {
@@ -50,7 +143,6 @@ public class Sunlight implements IStore {
 	void parse(){
 		final String slash="/";
 		int error_count=0;
-		int timeout=30000;
 		int pageid=1;
 		
 		Scanner scanner = new Scanner(System.in);
@@ -69,7 +161,6 @@ public class Sunlight implements IStore {
 		
 		String url=siteName+"/catalog/?product_type="+productid+"&page="+pageid;
 		
-		//Database database = new Database(category);
 		String nextPageURL="";
 		try{
 			Document doc = Jsoup.connect(url+slash).timeout(timeout).get();
@@ -89,89 +180,23 @@ public class Sunlight implements IStore {
 				Element ul = doc.body().getElementById("items-list");
 				Elements li = ul.children();
 
-				for(int i=0;i<li.size();i++){
-					
-					Ring ring = new Ring();
-					
+				for (int i = 0; i < li.size(); i++) {
 					Element object = li.get(i);
 					String article = object.getElementsByTag("span").get(0).text();
 					String name = object.getElementsByTag("span").get(1).text();
-					String brand = object.getElementsByTag("span").get(2).text();
 					String object_url = object.getElementsByTag("a").get(0).attr("href");
-					int object_count=-1;
-					
-					ring.article=article;
-					ring.name=name;
-					ring.url=siteName+object_url;
-					
-					try{
-						Document object_document = Jsoup.connect(siteName+object_url).timeout(timeout).get();
-						
-						Element price = object_document.getElementsByClass("price").get(0);
-						String new_price = "";
-						try{
-							new_price=price.getElementsByTag("span").get(0).text();
-						}catch(Exception e){
-							new_price="";
-							object_count=0;
-						}
-						String old_price="";
-						try{
-							old_price = price.getElementsByTag("s").get(0).text();
-							new_price = new_price.substring(0, new_price.length()-1);
-						}catch(Exception e){
-							old_price="";
-						}
-						
-						ring.count=String.valueOf(object_count);
-						ring.price=new_price;
-						ring.old_price=old_price;
-						
-						Element detail = object_document.getElementsByClass("detail_info").get(0);
-						String[] description = detail.getElementsByClass("text").get(1).html().split("<br />");
-						
-						ring.description=detail.getElementsByTag("h2").get(0).text();
-						
-						for(int k=0;k<description.length;k++){
-							String[] parts=description[k].split(":");
-							if(parts[0].toLowerCase().contains("тип".toLowerCase()))
-								ring.category=parts[1];
-							else if(parts[0].toLowerCase().contains("Металл".toLowerCase()) && !parts[0].toLowerCase().contains("цвет".toLowerCase()))
-								ring.material=parts[1];
-							else if(parts[0].toLowerCase().contains("Вес изделия".toLowerCase()))
-								ring.weight=parts[1];
-							else if(parts[0].toLowerCase().contains("Проба".toLowerCase())){
-								ring.proba=parts[1];
-							}
-						}
-						
-						Element ring_images_block = object_document.getElementsByClass("smallPics").first();
-						Elements ring_images = ring_images_block.getElementsByTag("img");
-						
-						for(int k=0;k<ring_images.size();k++){
-							String image_url=ring_images.get(k).attr("data-src");
-							URL img = new URL(image_url);
-							InputStream imageRing = img.openStream();
-							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							byte[] byteChunk = new byte[4096];
-							int n;
-		
-							while ( (n = imageRing.read(byteChunk)) > 0 ) {
-								baos.write(byteChunk, 0, n);
-							}
-							ring.addImage(baos);
-						}
-						
-						database.save(ring);
-						System.out.println(count);
-						count++;
-					}
-					catch(Exception e){
-						System.out.println("ERROR"+e.getLocalizedMessage());
-						error_count++;
-					}
+
+                    try {
+                        Ring ring = parsePage(article, name, siteName + object_url);
+                        database.save(ring);
+                        System.out.println(count);
+                        count++;
+                    } catch (Exception e) {
+                        logger.error(e.getLocalizedMessage());
+                        error_count++;
+                    }
 				}
-				
+
 				pageid++;
 				doc = Jsoup.connect(siteName+"/catalog/?product_type="+productid+"&page="+pageid).timeout(timeout).get();
 			}while(!end);
