@@ -47,7 +47,7 @@ public class Ftp {
 			client.setFileType(FTP.BINARY_FILE_TYPE);
 			status=true;
 		} catch (Exception e) {
-			System.out.println("Ошибка подключения к ftp серверу");
+			System.out.println("Error while connect to ftp"+e.getMessage());
 		}
 		
 		return status;

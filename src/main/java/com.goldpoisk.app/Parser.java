@@ -32,7 +32,7 @@ public class Parser {
 		String username=scanner.nextLine();
 		System.out.println("Введите ftp пароль");
 		String password=scanner.nextLine();*/
-
+        System.out.println(config.ftp_url+" "+config.ftp_login+" "+config.ftp_password);
 		ftp=new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
 
 		if (ftp.connect()) {
