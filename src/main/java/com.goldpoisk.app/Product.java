@@ -9,19 +9,19 @@ public class Product{
 	}
 	
 	boolean exist(String article){
-		boolean result=false;
+		boolean result = false;
 		
 		return result;
 	}
 	
 	boolean save(Ring ring){
-		boolean result=false;
+		boolean result = false;
 		database.save(ring);
 		return result;
 	}
 	
 	boolean update(Ring ring){
-		boolean result=false;
+		boolean result = false;
 		database.update(ring);
 		return result;
 	}

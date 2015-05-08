@@ -21,7 +21,7 @@ public class Ftp {
 	
 	public Ftp(String address, String username, String password){
 		
-		URL url=null;
+		URL url = null;
 		
 		try {
             url = new URL(address);
@@ -47,7 +47,7 @@ public class Ftp {
 			client.setFileType(FTP.BINARY_FILE_TYPE);
 			status=true;
 		} catch (Exception e) {
-			System.out.println("Error while connect to ftp"+e.getMessage());
+			Parser.logger.error("Error while connect to ftp"+e.getMessage());
 		}
 		
 		return status;
@@ -74,7 +74,7 @@ public class Ftp {
 			 client.changeWorkingDirectory(dirname);
 			 status=true;
 		}catch(Exception e){
-			System.out.println("Ошибка! Не удалось создать каталог "+dirname+" в директории "+siteName);
+			Parser.logger.error("Ошибка! Не удалось создать каталог "+dirname+" в директории "+siteName);
 		}
 		
 		return status;
@@ -104,10 +104,10 @@ public class Ftp {
         		 };
     		 client.setCopyStreamListener(streamListener);
     		 client.storeFile(filename+".sql", stream);
-        	 System.out.println("Файл успешно записан!");
+    		 Parser.logger.error("Файл успешно записан!");
         	 status=true;
          }catch(Exception e){
-        	 System.out.println("Ошибка! Не удалось сохранить файл "+filename+".sql");
+        	 Parser.logger.error("Ошибка! Не удалось сохранить файл "+filename+".sql");
          }
          
          

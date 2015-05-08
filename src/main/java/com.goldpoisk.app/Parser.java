@@ -14,7 +14,9 @@ public class Parser {
 	static Ftp ftp;
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
-    static IniConfigFile config=null;
+    static IniConfigFile config = null;
+    static CurrentDatabase postgreDB = null;
+    static Database database = new Database();
     
     String iniFile="development.ini";
     
@@ -24,20 +26,12 @@ public class Parser {
         config = new IniConfigFile(iniFile);
         config.setConfigParameters();
         
-        //init();
-		/*Scanner scanner = new Scanner(System.in);
-		System.out.println("Введите ftp адрес");
-		String address=scanner.nextLine();
-		System.out.println("Введите ftp логин");
-		String username=scanner.nextLine();
-		System.out.println("Введите ftp пароль");
-		String password=scanner.nextLine();*/
-        System.out.println(config.ftp_url+" "+config.ftp_login+" "+config.ftp_password);
-		ftp=new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
+		ftp = new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
 
+		postgreDB = new CurrentDatabase();
+		
 		if (ftp.connect()) {
 			 logger.info("Successfully connect to FTP");
-			 System.out.println("Successfully connect to FTP");
 			/*
 			 * Выбор по сайтам в следующем коммите
 			 */
@@ -50,17 +44,6 @@ public class Parser {
 		}
 
 	}
-
-    /*void init() throws FileNotFoundException, IOException {
-        File file = new File("development.ini");
-        Ini ini = new Ini(new FileReader(file));
-        Ini.Section pack = ini.get("package");
-
-        String name = pack.get("name");
-        String version = pack.get("version");
-        System.out.println("Name: " + name);
-        System.out.println("Version: " + version);
-    }*/
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Parser parser = new Parser();
