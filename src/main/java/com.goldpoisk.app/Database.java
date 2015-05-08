@@ -46,6 +46,11 @@ public class Database {
 			}
 	    }*/
 	    
+	    void update(Ring ring){
+	    	String query="UPDATE goldpoisk_entity SET price='"+ring.price+"' WHERE article='"+ring.article+"';";
+	    	sql_query+=query;
+	    }
+	    
 	    void save(Ring ring){
 	  
 		    	String query="INSERT INTO goldpoisk_entity"+
@@ -53,14 +58,14 @@ public class Database {
 		    			" VALUES "+
 		    			" ('"+ring.article+"','"+ring.name+"','"+ring.material+"','"+ring.category+"','"+ring.weight+"',+"+
 		    			"'"+ring.url+"','"+ring.proba+"','"+ring.type+"','"+ring.price+"','"+ring.description+"','"+ring.old_price+
-		    			"','"+ring.discount+"','"+ring.count+"')";
+		    			"','"+ring.discount+"','"+ring.count+"'); ";
 		    	
 		    	for(int i=0;i<ring.kamni.size();i++){
 		    		String query_kamni="INSERT INTO goldpoisk_kamni"+
 			    			" (article,name,color,weight,size)"+
 			    			" VALUES "+
 			    			" ('"+ring.article+"','"+ring.kamni.get(i)+"','"+(i<ring.kamniColor.size()?ring.kamniColor.get(i):"")+
-			    			"','"+(i<ring.kamniWeight.size()?ring.kamniWeight.get(i):"")+"','"+(i<ring.kamniSize.size()?ring.kamniSize.get(i):"")+"')";
+			    			"','"+(i<ring.kamniWeight.size()?ring.kamniWeight.get(i):"")+"','"+(i<ring.kamniSize.size()?ring.kamniSize.get(i):"")+"'); ";
 		    		query+=" "+query_kamni;
 		    	}
 		    	
@@ -69,7 +74,7 @@ public class Database {
 		    		String query_kamni="INSERT INTO goldpoisk_entity_images"+
 			    			" (article,image)"+
 			    			" VALUES "+
-			    			" ('"+ring.article+"','"+Hex.encodeHexString(image.toByteArray())+"')";
+			    			" ('"+ring.article+"','"+Hex.encodeHexString(image.toByteArray())+"'); ";
 		    		query+=" "+query_kamni;
 		    	}
 		    	
@@ -77,7 +82,7 @@ public class Database {
 		    		String query_watch="INSERT INTO goldpoisk_watchdetails"+
 			    			" (article,material,body_material,glass,type,mechanic)"+
 			    			" VALUES "+
-			    			" ('"+ring.article+"','"+ring.watch_material+"','"+ring.watch_material_body+"','"+ring.watch_glass+"','"+ring.watch_type+"','"+ring.watch_mechanic+"')";
+			    			" ('"+ring.article+"','"+ring.watch_material+"','"+ring.watch_material_body+"','"+ring.watch_glass+"','"+ring.watch_type+"','"+ring.watch_mechanic+"'); ";
 		    		query+=" "+query_watch;
 		    	}
 		    	

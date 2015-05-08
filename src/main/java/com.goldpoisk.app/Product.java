@@ -8,12 +8,7 @@ public class Product{
 		database = new Database();
 	}
 	
-	boolean exist(){
-		boolean result=false;
-		return result;
-	}
-	
-	boolean save(){
+	boolean exist(String article){
 		boolean result=false;
 		return result;
 	}
@@ -26,7 +21,7 @@ public class Product{
 	
 	boolean update(Ring ring){
 		boolean result=false;
-		//database.update(ring);
+		database.update(ring);
 		return result;
 	}
 	
