@@ -14,35 +14,44 @@ public class Parser {
 	static Ftp ftp;
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
+    static IniConfigFile config=null;
+    
+    String iniFile="development.ini";
+    
 	public Parser() throws FileNotFoundException, IOException {
         logger.info("Constructing");
 
-        init();
-		Scanner scanner = new Scanner(System.in);
+        config = new IniConfigFile(iniFile);
+        config.setConfigParameters();
+        
+        //init();
+		/*Scanner scanner = new Scanner(System.in);
 		System.out.println("Введите ftp адрес");
 		String address=scanner.nextLine();
 		System.out.println("Введите ftp логин");
 		String username=scanner.nextLine();
 		System.out.println("Введите ftp пароль");
-		String password=scanner.nextLine();
+		String password=scanner.nextLine();*/
 
-		ftp=new Ftp(address,username,password);
+		ftp=new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
 
 		if (ftp.connect()) {
+			 logger.info("Successfully connect to FTP");
+			 System.out.println("Successfully connect to FTP");
 			/*
 			 * Выбор по сайтам в следующем коммите
 			 */
 			/*ftp.makeDir("sunlight");
 			sunlight=new Sunlight();
 			sunlight.parse();*/
-			ftp.makeDir("gold585");
+			/*ftp.makeDir("gold585");
 			gold585 = new Gold585();
-			gold585.parse();
+			gold585.parse();*/
 		}
 
 	}
 
-    void init() throws FileNotFoundException, IOException {
+    /*void init() throws FileNotFoundException, IOException {
         File file = new File("development.ini");
         Ini ini = new Ini(new FileReader(file));
         Ini.Section pack = ini.get("package");
@@ -51,7 +60,7 @@ public class Parser {
         String version = pack.get("version");
         System.out.println("Name: " + name);
         System.out.println("Version: " + version);
-    }
+    }*/
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Parser parser = new Parser();

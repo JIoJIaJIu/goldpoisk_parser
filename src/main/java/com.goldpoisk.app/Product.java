@@ -10,6 +10,7 @@ public class Product{
 	
 	boolean exist(String article){
 		boolean result=false;
+		
 		return result;
 	}
 	
