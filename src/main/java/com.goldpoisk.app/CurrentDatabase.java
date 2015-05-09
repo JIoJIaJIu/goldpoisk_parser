@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.SQLException;
 
 public class CurrentDatabase{
 	
@@ -38,7 +39,7 @@ public class CurrentDatabase{
 		}
 	}
 	
-	public Ring getProduct(String article){
+	public Ring getProduct(String article) throws SQLException {
 		Ring ring = new Ring();
 		
 		String sql_query="SELECT * FROM product_product pp"
@@ -67,7 +68,7 @@ public class CurrentDatabase{
 		return ring;
 	}
 	
-	public boolean existProduct(String article){
+	public boolean existProduct(String article) throws SQLException {
 		boolean result=false;
 		
 		String sql_query="SELECT COUNT(*) as count FROM product_product pp"

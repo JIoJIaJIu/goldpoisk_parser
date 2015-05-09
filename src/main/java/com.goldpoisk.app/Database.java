@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Hex;
 
 public class Database {
 	    
-		String sql_query="";
+		public String sql_query="";
 	
 	    public Database(){
 	    	sql_query="";

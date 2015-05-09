@@ -197,7 +197,7 @@ public class Gold585 {
 			System.out.println("Выгружено: "+count);
 			System.out.println("С ошибкой: "+error_count);
 
-			Parser.ftp.saveFile(category, database.sql_query);
+            Parser.ftp.saveFile(category, Parser.database.sql_query);
 		}catch(Exception e){
 			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
 		}
