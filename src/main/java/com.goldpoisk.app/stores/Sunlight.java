@@ -204,7 +204,7 @@ public class Sunlight implements IStore {
 			System.out.println("Выгрузка завершена");
 			System.out.println("Выгружено: "+count);
 			System.out.println("С ошибкой: "+error_count);
-			Parser.sFtp.saveFile(category, database.sql_query);
+			Parser.ftp.saveFile(category, database.sql_query);
 			
 		}catch(Exception e){
 			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");

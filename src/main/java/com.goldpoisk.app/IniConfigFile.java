@@ -6,26 +6,26 @@ import org.ini4j.Wini;
 
 public class IniConfigFile{
 	
-	String mPostgresUrl = "";
-	String mPostgresDB = "";
-	String mPostgresName = "";
-	String mPostgresPassword = "";
-	String mPostgresSchema="";
+	String postgresUrl = "";
+	String postgresDB = "";
+	String postgresName = "";
+	String postgresPassword = "";
+	String postgresSchema="";
 	
-	String mFtpUrl = "";
-	String mFtpLogin = "";
-	String mFtpPassword = "";
+	String ftpUrl = "";
+	String ftpLogin = "";
+	String ftpPassword = "";
 	
-	String mAppName = "";
-	String mAppVersion = "";
+	String appName = "";
+	String appVersion = "";
 	
-	Wini mIni = null;
-	File mFile = null;
+	Wini ini = null;
+	File file = null;
 	
 	public IniConfigFile(String iniFile){
 		try{
-			mFile = new File(iniFile);
-			mIni = new Wini(mFile);
+			file = new File(iniFile);
+			ini = new Wini(file);
 		}catch(Exception e){
 			Parser.logger.error("Error while open .ini file");
 		}
@@ -33,18 +33,18 @@ public class IniConfigFile{
 	
 	void setConfigParameters(){
 		try{
-			mPostgresUrl = mIni.get("postgresql", "url", String.class);
-			mPostgresDB = mIni.get("postgresql", "name", String.class);
-			mPostgresName = mIni.get("postgresql", "user", String.class);
-			mPostgresPassword = mIni.get("postgresql", "password", String.class);
-			mPostgresSchema = mIni.get("postgresql", "schema", String.class);
+			postgresUrl = ini.get("postgresql", "url", String.class);
+			postgresDB = ini.get("postgresql", "name", String.class);
+			postgresName = ini.get("postgresql", "user", String.class);
+			postgresPassword = ini.get("postgresql", "password", String.class);
+			postgresSchema = ini.get("postgresql", "schema", String.class);
 			
-			mFtpUrl = mIni.get("ftp", "url", String.class);
-			mFtpLogin = mIni.get("ftp", "login", String.class);
-			mFtpPassword = mIni.get("ftp", "password", String.class);
+			ftpUrl = ini.get("ftp", "url", String.class);
+			ftpLogin = ini.get("ftp", "login", String.class);
+			ftpPassword = ini.get("ftp", "password", String.class);
 			
-			mAppName = mIni.get("package", "name", String.class);
-			mAppVersion = mIni.get("package", "version", String.class);
+			appName = ini.get("package", "name", String.class);
+			appVersion = ini.get("package", "version", String.class);
 		}catch(Exception e){
 			Parser.logger.error("Error while set ini parameters");
 		}

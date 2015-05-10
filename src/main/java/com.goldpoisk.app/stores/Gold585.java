@@ -40,7 +40,7 @@ public class Gold585 {
 		
 		String url="http://www.gold585.ru/catalog/"+category;
 		
-		Parser.sDatabase.clearQuery();
+		Parser.database.clearQuery();
 		
 		try{
 			Document doc = Jsoup.connect(url+slash).timeout(timeout).get();
@@ -95,7 +95,7 @@ public class Gold585 {
 								product.price=price;
 								product.description=description;
 								
-								if(!Parser.sPostgreDB.existProduct(article)){
+								if(!Parser.postgreDB.existProduct(article)){
 									Elements elementCharacter=body.getElementsByClass("characteristics");
 									Elements elementCharacterLi=elementCharacter.get(0).getElementsByTag("li");
 									for(int j=0;j<elementCharacterLi.size();j++){
@@ -168,13 +168,13 @@ public class Gold585 {
 										product.addImage(baos);
 									}
 									
-									Parser.sDatabase.save(product);
+									Parser.database.save(product);
 									
 								} else {
-									Product existedRing = Parser.sPostgreDB.getProduct(article);
+									Product existedRing = Parser.postgreDB.getProduct(article);
 									
 									if (existedRing.price.trim() != "" && !existedRing.price.equals(price)) {
-										Parser.sDatabase.update(product);
+										Parser.database.update(product);
 									}
 								}
 
@@ -197,7 +197,7 @@ public class Gold585 {
 			System.out.println("Выгружено: "+count);
 			System.out.println("С ошибкой: "+error_count);
 
-            Parser.sFtp.saveFile(category, Parser.sDatabase.sql_query);
+            Parser.ftp.saveFile(category, Parser.database.sql_query);
 		}catch(Exception e){
 			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
 		}

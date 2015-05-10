@@ -62,13 +62,13 @@ public class Product{
 	
 	boolean save(Product product) {
 		boolean result = false;
-		Parser.sDatabase.save(product);
+		Parser.database.save(product);
 		return result;
 	}
 	
 	boolean update(Product product) {
 		boolean result = false;
-		Parser.sDatabase.update(product);
+		Parser.database.update(product);
 		return result;
 	}
 	
