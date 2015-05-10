@@ -1,18 +1,28 @@
 package goldpoisk_parser;
 
+import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
+
+
+@SuppressWarnings("deprecation")
 public class CurrentDatabase{
 	
 	Connection connection = null;
 	Statement statement = null;
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null; 
+	SessionFactory sessionFactory = null;
+	Session session = null;
 	
 	final String DB_URL = Parser.config.postgresUrl;
 	final String DB_NAME = Parser.config.postgresDB;
@@ -21,22 +31,24 @@ public class CurrentDatabase{
 	final String DB_SCHEMA = Parser.config.postgresSchema;
 	
 	public CurrentDatabase(){
+		
+		//Class.forName("org.postgresql.Driver");
+		
 		try {
-			Class.forName("org.postgresql.Driver");
-			connection = DriverManager.getConnection(
-					"jdbc:postgresql://"+DB_URL+"/"+DB_NAME, 
-					DB_USER,
-					DB_PASSWORD);
-			statement = connection.createStatement(); 
-			try { 
-				statement.execute("set search_path to '" + DB_SCHEMA + "'"); 
-			} 
-			finally { 
-				statement.close(); 
-			}
-		} catch (Exception e) {
-			Parser.logger.error("Error while connect to PostgreSQL Database" + e.getMessage());
-		}
+			File f = new File("hibernate.cfg.xml");
+		      AnnotationConfiguration conf = new AnnotationConfiguration().configure(f);
+		     // conf.setProperty("hibernate.connection.url", "jdbc:postgresql://"+DB_URL+DB_NAME);
+		     // Parser.logger.error(DB_URL+DB_NAME);
+		      conf.setProperty("hibernate.connection.username", DB_USER);
+		      conf.setProperty("hibernate.connection.password", DB_PASSWORD);
+		      StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(conf.getProperties());
+	          sessionFactory = conf.buildSessionFactory(ssrb.build());
+	          session = sessionFactory.openSession();
+	          Parser.logger.error("Successfully connect to Postgres Database");
+		    } catch (Throwable ex) {
+		      Parser.logger.error("Error while connect to Postgres Database");
+		      throw new ExceptionInInitializerError(ex);
+		    }
 	}
 	
 	public Product getProduct(String article) throws SQLException {
