@@ -39,8 +39,8 @@ public class CurrentDatabase{
 		}
 	}
 	
-	public Ring getProduct(String article) throws SQLException {
-		Ring ring = new Ring();
+	public Product getProduct(String article) throws SQLException {
+		Product product = new Product();
 		
 		String sql_query="SELECT * FROM product_product pp"
 				+ " LEFT JOIN product_item pi ON pi.id=pp.id"
@@ -56,16 +56,16 @@ public class CurrentDatabase{
 		}
 		
 		try{
-			ring.article=resultSet.getString("number");
-			ring.price=resultSet.getString("cost");
-			ring.count=resultSet.getString("quantity");
+			product.article=resultSet.getString("number");
+			product.price=resultSet.getString("cost");
+			product.count=resultSet.getString("quantity");
 		}catch(Exception e){
 			Parser.logger.error("Error while get data from PostgreSQL in CurrentDatabase.getProduct method");
 		}
 		
 		resultSet.close();
 		
-		return ring;
+		return product;
 	}
 	
 	public boolean existProduct(String article) throws SQLException {

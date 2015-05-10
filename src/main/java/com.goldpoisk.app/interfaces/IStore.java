@@ -7,5 +7,5 @@ import java.net.MalformedURLException;
 public interface IStore {
     ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
                                                        IOException;
-    public Ring parsePage(String article, String name, String url) throws Exception;
+    public Product parsePage(String article, String name, String url) throws Exception;
 }

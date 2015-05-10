@@ -27,11 +27,11 @@ public class Sunlight implements IStore {
     public Sunlight() {}
 
     // IStore
-    public Ring parsePage(String article, String name, String url) throws Exception {
+    public Product parsePage(String article, String name, String url) throws Exception {
         logger.info("parsePage {}", url);
         logger.info("article: {} name: {}", article, name);
         // TODO: rename
-        Ring product = new Ring();
+        Product product = new Product();
 
         product.article = article;
         product.name = name;
@@ -187,8 +187,8 @@ public class Sunlight implements IStore {
 					String object_url = object.getElementsByTag("a").get(0).attr("href");
 
                     try {
-                        Ring ring = parsePage(article, name, siteName + object_url);
-                        database.save(ring);
+                        Product product = parsePage(article, name, siteName + object_url);
+                        database.save(product);
                         System.out.println(count);
                         count++;
                     } catch (Exception e) {
