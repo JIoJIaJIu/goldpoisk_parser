@@ -44,37 +44,48 @@ public class Database {
 	    
 	    void save(Product product){
 	  
-		    	String query = "INSERT INTO goldpoisk_entity"
-		    			+ " (article,name,material,category,weight,url,proba,type,price,description,old_price,discount,count)"
-		    			+ " VALUES "
-		    			+ " ('" + product.article + "','" + product.name + "','" + product.material + "','" + product.category + "','" + product.weight + "',+"
-		    			+ "'" + product.url + "','" + product.proba + "','" + product.type + "','" + product.price + "','" + product.description + "','" + product.old_price
-		    			+ "','" + product.discount+"','" + product.count + "'); ";
+		    	String query = "INSERT INTO goldpoisk_entity" +
+		    			" (article,name,material,category,weight,url,proba,type,price,description,old_price,discount,count)" +
+		    			" VALUES " +
+		    			" ('%s','%s','%s'," +
+		    			"'%s','%s','%s','%s'," +
+		    			"'%s','%s','%s','%s'," +
+		    			"'%s','%s'); ";
+		    	
+		    	query += " " + String.format(query, product.article, product.name, product.material, 
+		    									product.category, product.weight, product.url, product.proba, 
+		    									product.type, product.price, product.description, product.old_price, 
+		    									product.discount, product.count);
 		    	
 		    	for(int i = 0; i < product.kamni.size(); i ++){
-		    		String query_kamni = "INSERT INTO goldpoisk_kamni"
-			    			+ " (article,name,color,weight,size)"
-			    			+ " VALUES "
-			    			+ " ('"+product.article+"','"+product.kamni.get(i)+"','"+(i<product.kamniColor.size()?product.kamniColor.get(i):"")
-			    			+ "','"+(i<product.kamniWeight.size()?product.kamniWeight.get(i):"")+"','"+(i<product.kamniSize.size()?product.kamniSize.get(i):"")+"'); ";
-		    		query += " "+query_kamni;
+		    		String query_kamni = "INSERT INTO goldpoisk_kamni" +
+			    			" (article,name,color,weight,size)" +
+			    			" VALUES " +
+			    			" ('%s','%s'," +
+			    			"'%s','%s'," +
+			    			"'%s'); ";
+		    		query += " "+String.format(query_kamni, product.article, product.kamni.get(i),
+		    				(i<product.kamniColor.size()?product.kamniColor.get(i):""), (i<product.kamniWeight.size()?product.kamniWeight.get(i):""),
+		    				(i<product.kamniSize.size()?product.kamniSize.get(i):""));
 		    	}
 		    	
 		    	for(int i = 0; i<product.images.size(); i++){
 		    		ByteArrayOutputStream image = product.images.get(i);
-		    		String query_kamni = "INSERT INTO goldpoisk_entity_images"
-			    			+ " (article,image)"
-			    			+ " VALUES "
-			    			+ " ('"+product.article+"','"+Hex.encodeHexString(image.toByteArray())+"'); ";
-		    		query += " " + query_kamni;
+		    		String query_kamni = "INSERT INTO goldpoisk_entity_images" +
+			    			" (article,image)" +
+			    			" VALUES " +
+			    			" ('%s','%s'); ";
+		    		query += " " + String.format(query_kamni, product.article, Hex.encodeHexString(image.toByteArray()));
 		    	}
 		    	
 		    	if(product.type=="Watch"){
-		    		String query_watch="INSERT INTO goldpoisk_watchdetails"+
-			    			" (article,material,body_material,glass,type,mechanic)"+
-			    			" VALUES "+
-			    			" ('"+product.article+"','"+product.watch_material+"','"+product.watch_material_body+"','"+product.watch_glass+"','"+product.watch_type+"','"+product.watch_mechanic+"'); ";
-		    		query+=" "+query_watch;
+		    		String query_watch="INSERT INTO goldpoisk_watchdetails" +
+			    			" (article,material,body_material,glass,type,mechanic)" +
+			    			" VALUES " +
+			    			" ('%s','%s','%s'," +
+			    			" '%s','%s','%s'); ";
+		    		query+=" "+String.format(query_watch, product.article, product.watch_material, product.watch_material_body,
+		    				product.watch_glass, product.watch_type, product.watch_mechanic);
 		    	}
 		    	
 		    	sql_query+=" "+query;		    	
