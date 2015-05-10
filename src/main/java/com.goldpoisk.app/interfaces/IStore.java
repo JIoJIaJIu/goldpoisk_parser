@@ -8,4 +8,5 @@ public interface IStore {
     ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
                                                        IOException;
     public Product parsePage(String article, String name, String url) throws Exception;
+    public void parse() throws Exception;
 }
