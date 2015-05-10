@@ -41,13 +41,14 @@ public class Sunlight implements IStore {
     // IStore
     public Product parsePage(String article, String name, String url) throws Exception {
         logger.info("*** Parsing page {}", url);
-        logger.info("article: {} name: {}", article, name);
-        // TODO: rename
         Product product = new Product();
 
         product.article = article;
         product.name = name;
         product.url = url;
+        logger.info("Setting name: {}", name);
+        logger.info("Setting article: {}", article);
+        logger.info("Setting url: {}", url);
         int count = -1;
 
         Document doc = Jsoup.connect(url).timeout(timeout).get();
