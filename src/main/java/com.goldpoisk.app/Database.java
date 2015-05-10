@@ -35,10 +35,11 @@ public class Database {
 	    }
 	    
 	    void update(Ring ring){
-	    	String query = "UPDATE goldpoisk_entity "
-	    					+ "SET price='" + ring.price + "' "
-	    					+ "WHERE article='" + ring.article + "';";
-	    	sql_query += " " + query;
+            String query = "UPDATE goldpoisk_entity" +
+                           "SET price='%s'" +
+                           "WHERE article='%s'";
+
+            sql_query += " " + String.format(query, ring.price, ring.article);
 	    }
 	    
 	    void save(Ring ring){
