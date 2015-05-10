@@ -6,18 +6,18 @@ import org.ini4j.Wini;
 
 public class IniConfigFile{
 	
-	static String postgresql_url = "";
-	static String postgresql_db = "";
-	static String postgresql_user = "";
-	static String postgresql_password = "";
-	static String postgresql_schema="";
+	String postgresUrl = "";
+	String postgresDB = "";
+	String postgresName = "";
+	String postgresPassword = "";
+	String postgresSchema="";
 	
-	static String ftp_url = "";
-	static String ftp_login = "";
-	static String ftp_password = "";
+	String ftpUrl = "";
+	String ftpLogin = "";
+	String ftpPassword = "";
 	
-	static String app_name = "";
-	static String app_version = "";
+	String appName = "";
+	String appVersion = "";
 	
 	Wini ini = null;
 	File file = null;
@@ -33,18 +33,18 @@ public class IniConfigFile{
 	
 	void setConfigParameters(){
 		try{
-			postgresql_url = ini.get("postgresql","url",String.class);
-			postgresql_db = ini.get("postgresql","name",String.class);
-			postgresql_user = ini.get("postgresql","user",String.class);
-			postgresql_password = ini.get("postgresql","password",String.class);
-			postgresql_schema = ini.get("postgresql","schema",String.class);
+			postgresUrl = ini.get("postgresql", "url", String.class);
+			postgresDB = ini.get("postgresql", "name", String.class);
+			postgresName = ini.get("postgresql", "user", String.class);
+			postgresPassword = ini.get("postgresql", "password", String.class);
+			postgresSchema = ini.get("postgresql", "schema", String.class);
 			
-			ftp_url = ini.get("ftp","url",String.class);
-			ftp_login = ini.get("ftp","login",String.class);
-			ftp_password = ini.get("ftp","password",String.class);
+			ftpUrl = ini.get("ftp", "url", String.class);
+			ftpLogin = ini.get("ftp", "login", String.class);
+			ftpPassword = ini.get("ftp", "password", String.class);
 			
-			app_name = ini.get("package","name",String.class);
-			app_version = ini.get("package","version",String.class);
+			appName = ini.get("package", "name", String.class);
+			appVersion = ini.get("package", "version", String.class);
 		}catch(Exception e){
 			Parser.logger.error("Error while set ini parameters");
 		}

@@ -70,17 +70,17 @@ public class Gold585 {
 							index++;
 						}
 						
-							Ring ring = new Ring();
-							ring.article=article;
-							ring.name=name;
-							ring.url="http://www.gold585.ru"+href;
+							Product product = new Product();
+							product.article=article;
+							product.name=name;
+							product.url="http://www.gold585.ru"+href;
 							
 							if(name.toLowerCase().contains("цепь".toLowerCase()))
-								ring.type="chains";
+								product.type="chains";
 							else if(name.toLowerCase().contains("браслет".toLowerCase()))
-								ring.type="bracelets";
+								product.type="bracelets";
 							else
-								ring.type=category;
+								product.type=category;
 							
 								String description = body.getElementById("tab2").text();
 								String[] price_whole = body.getElementById("nprice").text().split(":");
@@ -90,10 +90,10 @@ public class Gold585 {
 								String discount = body.getElementById("discount").getElementsByTag("b").get(0).text();
 								
 								
-								ring.old_price=old_price;
-								ring.discount=discount;
-								ring.price=price;
-								ring.description=description;
+								product.old_price=old_price;
+								product.discount=discount;
+								product.price=price;
+								product.description=description;
 								
 								if(!Parser.postgreDB.existProduct(article)){
 									Elements elementCharacter=body.getElementsByClass("characteristics");
@@ -102,52 +102,52 @@ public class Gold585 {
 										String text = elementCharacterLi.get(j).text();
 										String[] parts = text.split(":");
 										if(parts[0].toLowerCase().contains("Изделие".toLowerCase()))
-											ring.category=parts[1];
+											product.category=parts[1];
 										else if(parts[0].toLowerCase().contains("Металл".toLowerCase()))
-											ring.material=parts[1];
+											product.material=parts[1];
 										else if(parts[0].toLowerCase().contains("Вес изделия".toLowerCase()))
-											ring.weight=parts[1];
+											product.weight=parts[1];
 										else if(parts[0].toLowerCase().contains("Вставка".toLowerCase())){
 											String [] kamni = parts[1].split(",");
 											for(int z=0;z<kamni.length;z++){
-												ring.addKamni(kamni[z]);
+												product.addKamni(kamni[z]);
 											}
 										}
 										else if(parts[0].toLowerCase().contains("Вес камней".toLowerCase())){
 											String [] kamni = parts[1].split(";");
 											for(int z=0;z<kamni.length;z++){
-												ring.addKamniWeight(kamni[z]);
+												product.addKamniWeight(kamni[z]);
 											}
 										}
 										else if(parts[0].toLowerCase().contains("Чистота".toLowerCase())){
 											String [] kamni = parts[1].split(";");
 											for(int z=0;z<kamni.length;z++){
-												ring.addKamniColor(kamni[z]);
+												product.addKamniColor(kamni[z]);
 											}
 										}
 										else if(parts[0].toLowerCase().contains("Диаметр камней".toLowerCase())){
 											String [] kamni = parts[1].split(";");
 											for(int z=0;z<kamni.length;z++){
-												ring.addKamniSize(kamni[z]);
+												product.addKamniSize(kamni[z]);
 											}
 										}
 										else if(parts[0].toLowerCase().contains("Проба".toLowerCase())){
-											ring.proba=parts[1];
+											product.proba=parts[1];
 										}
 										else if(parts[0].toLowerCase().contains("Материал браслета".toLowerCase())){
-											ring.watch_material=parts[1];
+											product.watch_material=parts[1];
 										}
 										else if(parts[0].toLowerCase().contains("Материал корпуса".toLowerCase())){
-											ring.watch_material_body=parts[1];
+											product.watch_material_body=parts[1];
 										}
 										else if(parts[0].toLowerCase().contains("Стекло".toLowerCase())){
-											ring.watch_glass=parts[1];
+											product.watch_glass=parts[1];
 										}
 										else if(parts[0].toLowerCase().contains("Тип".toLowerCase())){
-											ring.watch_type=parts[1];
+											product.watch_type=parts[1];
 										}
 										else if(parts[0].toLowerCase().contains("Механизм".toLowerCase())){
-											ring.watch_mechanic=parts[1];
+											product.watch_mechanic=parts[1];
 										}
 									}
 									
@@ -165,16 +165,16 @@ public class Gold585 {
 										while ( (n = imageRing.read(byteChunk)) > 0 ) {
 											baos.write(byteChunk, 0, n);
 										}
-										ring.addImage(baos);
+										product.addImage(baos);
 									}
 									
-									Parser.database.save(ring);
+									Parser.database.save(product);
 									
 								} else {
-									Ring existedRing = Parser.postgreDB.getProduct(article);
+									Product existedRing = Parser.postgreDB.getProduct(article);
 									
 									if (existedRing.price.trim() != "" && !existedRing.price.equals(price)) {
-										Parser.database.update(ring);
+										Parser.database.update(product);
 									}
 								}
 

@@ -26,9 +26,9 @@ public class Parser {
         config = new IniConfigFile(iniFile);
         config.setConfigParameters();
         
-		ftp = new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
+        ftp = new Ftp(config.ftpUrl,config.ftpLogin,config.ftpPassword);
 
-		postgreDB = new CurrentDatabase();
+        postgreDB = new CurrentDatabase();
 		
 		if (ftp.connect()) {
 			 logger.info("Successfully connect to FTP");

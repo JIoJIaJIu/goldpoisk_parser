@@ -14,11 +14,11 @@ public class CurrentDatabase{
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null; 
 	
-	final String DB_URL = Parser.config.postgresql_url;
-	final String DB_NAME = Parser.config.postgresql_db;
-	final String DB_USER = Parser.config.postgresql_user;
-	final String DB_PASSWORD = Parser.config.postgresql_password;
-	final String DB_SCHEMA = Parser.config.postgresql_schema;
+	final String DB_URL = Parser.config.postgresUrl;
+	final String DB_NAME = Parser.config.postgresDB;
+	final String DB_USER = Parser.config.postgresName;
+	final String DB_PASSWORD = Parser.config.postgresPassword;
+	final String DB_SCHEMA = Parser.config.postgresSchema;
 	
 	public CurrentDatabase(){
 		try {
@@ -39,8 +39,8 @@ public class CurrentDatabase{
 		}
 	}
 	
-	public Ring getProduct(String article) throws SQLException {
-		Ring ring = new Ring();
+	public Product getProduct(String article) throws SQLException {
+		Product product = new Product();
 		
 		String sql_query="SELECT * FROM product_product pp"
 				+ " LEFT JOIN product_item pi ON pi.id=pp.id"
@@ -56,16 +56,16 @@ public class CurrentDatabase{
 		}
 		
 		try{
-			ring.article=resultSet.getString("number");
-			ring.price=resultSet.getString("cost");
-			ring.count=resultSet.getString("quantity");
+			product.article=resultSet.getString("number");
+			product.price=resultSet.getString("cost");
+			product.count=resultSet.getString("quantity");
 		}catch(Exception e){
 			Parser.logger.error("Error while get data from PostgreSQL in CurrentDatabase.getProduct method");
 		}
 		
 		resultSet.close();
 		
-		return ring;
+		return product;
 	}
 	
 	public boolean existProduct(String article) throws SQLException {
