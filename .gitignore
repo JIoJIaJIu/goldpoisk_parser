@@ -1,6 +1,5 @@
 *.sw?
 target/**
-/target
 .classpath
 .project
-.settings/
+.settings/**
