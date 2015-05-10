@@ -1,10 +1,14 @@
 package goldpoisk_parser;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.lang.Integer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import org.jsoup.Jsoup;
@@ -15,20 +19,28 @@ import org.jsoup.select.Elements;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-public class Sunlight implements IStore {
+import org.ini4j.Ini;
 
+public class Sunlight implements IStore {
     String category = "";
-    final String siteName="http://www.love-sl.ru";
-    final String databaseName="sunlight_earring";
-    static Logger logger = LogManager.getLogger(Sunlight.class);
+    final String siteName;
+    final String databaseName;
+    static Logger logger = LogManager.getLogger(Sunlight.class.getName());
     static int timeout = 30000; // ms
     int productid = 0;
+    Ini.Section settings;
 
-    public Sunlight() {}
+    public Sunlight() throws IOException {
+        Ini ini = new Ini(new File("stores.ini"));
+        settings = ini.get("Sunlight");
+
+        siteName = settings.get("url");
+        databaseName = settings.get("database");
+    }
 
     // IStore
     public Product parsePage(String article, String name, String url) throws Exception {
-        logger.info("parsePage {}", url);
+        logger.info("*** Parsing page {}", url);
         logger.info("article: {} name: {}", article, name);
         // TODO: rename
         Product product = new Product();
@@ -57,7 +69,9 @@ public class Sunlight implements IStore {
             oldPrice = "";
         }
 
-        logger.info("Setting count: {} newPrice: {} oldPrice: {}", count, newPrice, oldPrice);
+        logger.info("Setting count: {}", count);
+        logger.info("Setting newPrice: {}", newPrice);
+        logger.info("Setting oldPrice: {}", oldPrice);
         product.count = String.valueOf(count);
         product.price = newPrice;
         product.old_price = oldPrice;
@@ -69,24 +83,24 @@ public class Sunlight implements IStore {
 
         for (int i = 0; i < description.length; i++) {
             String[] parts = description[i].split(":");
-            String part = parts[0].toLowerCase();
-            String value = parts[1].toLowerCase();
+            String part = parts[0].toLowerCase().trim();
+            String value = parts[1].toLowerCase().trim();
 
             if (part.contains("тип")) {
-                logger.info("Founded category: {}", value);
+                logger.info("Setting category: {}", value);
                 product.category = value;
 
             } else if (part.contains("металл") &&
                       !part.contains("цвет")) {
-                logger.info("Founded material: {}", value);
+                logger.info("Setting material: {}", value);
                 product.material = value;
 
             } else if(part.contains("вес изделия")) {
-                logger.info("Founded weight: {}", value);
+                logger.info("Settings weight: {}", value);
                 product.weight = value;
 
             } else if(part.contains("проба")) {
-                logger.info("Founded material: {}", value);
+                logger.info("Settings material: {}", value);
                 product.proba = value;
             }
         }
@@ -105,7 +119,7 @@ public class Sunlight implements IStore {
 
     public ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
                                                               IOException {
-        logger.debug("Loading image {}", url);
+        logger.info("Loading image {}", url);
 
         URL imageUrl = new URL(url);
         InputStream image = imageUrl.openStream();
@@ -121,94 +135,94 @@ public class Sunlight implements IStore {
         return blob;
     }
 	
-	int getProductId(String category) {
-		int id = 0;
-		category=category.toLowerCase();
+	public void parse() throws Exception {
+        String[] categories = settings.get("categories").split(",");
 
-		switch(category){
-			case "серьги": id=4; break;
-			case "кольца": id=5; break;
-			case "подвески": id=8; break;
-			case "браслеты": id=317; break;
-			case "цепи": id=319; break;
-			case "колье": id=365; break;
-			case "брошь": id=366; break;
-			case "часы": id=318; break;
-			case "пирсинг": id=478; break;
-			default: break;
-		}
-		return id;
-	}
-	
-	void parse(){
-		final String slash="/";
-		int error_count=0;
-		int pageid=1;
-		
-		Scanner scanner = new Scanner(System.in);
-		int count=0;
-		
-		do{
-			System.out.println("Введите категорию изделий для "+siteName+". Например: Серьги");
-			category=scanner.nextLine();
-			productid=getProductId(category);
-		}while(productid==0);
-		
-		System.out.println("Введите timeout подключения. По умолчанию 30000 (30с)");
-		timeout=scanner.nextInt();
-		
-		scanner.close();
-		
-		String url=siteName+"/catalog/?product_type="+productid+"&page="+pageid;
-		
-		String nextPageURL="";
-		try{
-			Document doc = Jsoup.connect(url+slash).timeout(timeout).get();
-	
-			Element pages=doc.getElementsByClass("pagination").get(0);
-			Elements page=pages.getElementsByTag("a");
-			Element lastPage = page.get(page.size()-1);
-			
-			String lastPageURL=lastPage.attr("href");
-			
-			Database database = new Database();
-			
-			boolean end=false;
-			do{
-				if(("/catalog/?product_type="+productid+"&page="+pageid).equals(lastPageURL))
-					end=true;
-				Element ul = doc.body().getElementById("items-list");
-				Elements li = ul.children();
+        for (Iterator<String> i = Arrays.asList(categories).iterator(); i.hasNext(); ) {
+            int count = 0;
+            int errors = 0;
+            int id = Integer.parseInt(i.next());
+            int pages;
 
-				for (int i = 0; i < li.size(); i++) {
-					Element object = li.get(i);
-					String article = object.getElementsByTag("span").get(0).text();
-					String name = object.getElementsByTag("span").get(1).text();
-					String object_url = object.getElementsByTag("a").get(0).attr("href");
+            String url = String.format("%s/catalog/?product_type=%d", siteName, id);
+            logger.info("{}: {}", getCategoryName(id), url);
+            logger.info("Started..");
+
+            try {
+                Document doc = Jsoup.connect(url).timeout(timeout).get();
+                Element paginationNode = doc.getElementsByClass("pagination").get(0);
+                Elements pageNodes = paginationNode.getElementsByTag("a");
+                pages = pageNodes.size();
+            } catch(Exception e) {
+                System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
+                errors++;
+                continue;
+            }
+
+            //Database database = new Database();
+			
+            int page = 0;
+            while (page < pages) {
+                String pageUrl = String.format("%s&page=%d", url, page);
+                Document doc;
+                try {
+                    doc = Jsoup.connect(pageUrl).timeout(timeout).get();
+                } catch (Exception e) {
+                    logger.error("Couldn't open url {}: {}", pageUrl, e.getMessage());
+                    errors++;
+                    continue;
+                }
+                Element ul = doc.body().getElementById("items-list");
+                Elements lis = ul.children();
+
+                for (int j = 0; j < lis.size(); j++) {
+                    Element li = lis.get(j);
+                    String article = li.getElementsByTag("span").get(0).text();
+                    String name = li.getElementsByTag("span").get(1).text();
+                    String path = li.getElementsByTag("a").get(0).attr("href");
 
                     try {
-                        Product product = parsePage(article, name, siteName + object_url);
-                        database.save(product);
-                        System.out.println(count);
+                        Product product = parsePage(article, name, siteName + path);
+                        //database.save(product);
                         count++;
                     } catch (Exception e) {
-                        logger.error(e.getLocalizedMessage());
-                        error_count++;
+                        logger.error("Error IStore.parsePage: {}", e.getMessage());
+                        errors++;
                     }
-				}
+                }
+                page++;
+            }
 
-				pageid++;
-				doc = Jsoup.connect(siteName+"/catalog/?product_type="+productid+"&page="+pageid).timeout(timeout).get();
-			}while(!end);
-			
-			System.out.println("Выгрузка завершена");
-			System.out.println("Выгружено: "+count);
-			System.out.println("С ошибкой: "+error_count);
-			Parser.ftp.saveFile(category, database.sql_query);
-			
-		}catch(Exception e){
-			System.out.println("Ошибка подключения к сайту. Проверьте правильность ввода категории или увеличьте timeout");
-		}
-		
+            logger.info("{}: {}", getCategoryName(id), url);
+            logger.info("Successful: {}", count);
+            logger.info("Errors: {}", errors);
+            logger.info("Finished");
+            //Parser.ftp.saveFile(category, database.sql_query);
+        }
 	}
+
+    String getCategoryName(int id) throws Exception {
+        switch (id) {
+            case 4:
+                return "Серьги";
+            case 5:
+                return "Кольца";
+            case 8:
+                return "Подвески";
+            case 317:
+                return "Браслеты";
+            case 319:
+                return "Цепи";
+            case 365:
+                return "Колье";
+            case 366:
+                return "Брошь";
+            case 318:
+                return "Часы";
+            case 478:
+                return "Пирсинг";
+            default:
+                throw new Exception("Wrong category id " + id);
+        }
+    }
 }
