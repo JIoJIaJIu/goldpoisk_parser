@@ -35,19 +35,19 @@ public class CurrentDatabase{
 		//Class.forName("org.postgresql.Driver");
 		
 		try {
-			File f = new File("hibernate.cfg.xml");
-		      AnnotationConfiguration conf = new AnnotationConfiguration().configure(f);
-		     // conf.setProperty("hibernate.connection.url", "jdbc:postgresql://"+DB_URL+DB_NAME);
-		     // Parser.logger.error(DB_URL+DB_NAME);
-		      conf.setProperty("hibernate.connection.username", DB_USER);
-		      conf.setProperty("hibernate.connection.password", DB_PASSWORD);
-		      StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(conf.getProperties());
-	          sessionFactory = conf.buildSessionFactory(ssrb.build());
-	          session = sessionFactory.openSession();
-	          Parser.logger.error("Successfully connect to Postgres Database");
+				File f = new File("hibernate.cfg.xml");
+				AnnotationConfiguration conf = new AnnotationConfiguration().configure(f);
+				// conf.setProperty("hibernate.connection.url", "jdbc:postgresql://"+DB_URL+DB_NAME);
+				// Parser.logger.error(DB_URL+DB_NAME);
+				conf.setProperty("hibernate.connection.username", DB_USER);
+				conf.setProperty("hibernate.connection.password", DB_PASSWORD);
+				StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(conf.getProperties());
+				sessionFactory = conf.buildSessionFactory(ssrb.build());
+				session = sessionFactory.openSession();
+			   	Parser.logger.error("Successfully connect to Postgres Database");
 		    } catch (Throwable ex) {
-		      Parser.logger.error("Error while connect to Postgres Database");
-		      throw new ExceptionInInitializerError(ex);
+		       	Parser.logger.error("Error while connect to Postgres Database");
+		    	throw new ExceptionInInitializerError(ex);
 		    }
 	}
 	
