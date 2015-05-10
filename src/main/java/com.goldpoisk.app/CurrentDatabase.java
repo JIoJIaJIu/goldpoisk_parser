@@ -14,11 +14,11 @@ public class CurrentDatabase{
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null; 
 	
-	final String DB_URL = Parser.config.postgresql_url;
-	final String DB_NAME = Parser.config.postgresql_db;
-	final String DB_USER = Parser.config.postgresql_user;
-	final String DB_PASSWORD = Parser.config.postgresql_password;
-	final String DB_SCHEMA = Parser.config.postgresql_schema;
+	final String DB_URL = Parser.sConfig.mPostgresUrl;
+	final String DB_NAME = Parser.sConfig.mPostgresDB;
+	final String DB_USER = Parser.sConfig.mPostgresName;
+	final String DB_PASSWORD = Parser.sConfig.mPostgresPassword;
+	final String DB_SCHEMA = Parser.sConfig.mPostgresSchema;
 	
 	public CurrentDatabase(){
 		try {

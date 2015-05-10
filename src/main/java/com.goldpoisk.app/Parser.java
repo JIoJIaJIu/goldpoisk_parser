@@ -11,26 +11,26 @@ import org.apache.logging.log4j.LogManager;
 public class Parser {
 	Gold585 gold585;
 	Sunlight sunlight;
-	static Ftp ftp;
+	static Ftp sFtp;
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
-    static IniConfigFile config = null;
-    static CurrentDatabase postgreDB = null;
-    static Database database = new Database();
+    static IniConfigFile sConfig = null;
+    static CurrentDatabase sPostgreDB = null;
+    static Database sDatabase = new Database();
     
     String iniFile="development.ini";
     
 	public Parser() throws FileNotFoundException, IOException {
         logger.info("Constructing");
 
-        config = new IniConfigFile(iniFile);
-        config.setConfigParameters();
+        sConfig = new IniConfigFile(iniFile);
+        sConfig.setConfigParameters();
         
-		ftp = new Ftp(config.ftp_url,config.ftp_login,config.ftp_password);
+        sFtp = new Ftp(sConfig.mFtpUrl,sConfig.mFtpLogin,sConfig.mFtpPassword);
 
-		postgreDB = new CurrentDatabase();
+        sPostgreDB = new CurrentDatabase();
 		
-		if (ftp.connect()) {
+		if (sFtp.connect()) {
 			 logger.info("Successfully connect to FTP");
 			/*
 			 * Выбор по сайтам в следующем коммите
