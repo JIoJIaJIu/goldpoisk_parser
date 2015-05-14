@@ -7,39 +7,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Parser {
-	Gold585 gold585;
-	Sunlight sunlight;
-	static Ftp ftp;
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
-    static IniConfigFile config = null;
-    static CurrentDatabase postgreDB = null;
-    static Database database = new Database();
-    
-    String iniFile="development.ini";
-    
+    static Config config;
+    //final Ftp ftp;
+    static GoldpoiskDatabase goldpoiskDb;
+
 	public Parser() throws FileNotFoundException, IOException {
-        logger.info("Constructing");
+        config = new Config();
+        goldpoiskDb = new GoldpoiskDatabase();
 
-        config = new IniConfigFile(iniFile);
-        config.setConfigParameters();
-        
+        Sunlight sunlight = new Sunlight();
+        try {
+            sunlight.parse();
+        } catch (Exception e) {}
+
+        /*
         ftp = new Ftp(config.ftpUrl,config.ftpLogin,config.ftpPassword);
-
-        postgreDB = new CurrentDatabase();
-		
 		if (ftp.connect()) {
 			 logger.info("Successfully connect to FTP");
-			/*
-			 * Выбор по сайтам в следующем коммите
-			 */
-			/*ftp.makeDir("sunlight");
-			sunlight=new Sunlight();
-			sunlight.parse();*/
-			/*ftp.makeDir("gold585");
-			gold585 = new Gold585();
-			gold585.parse();*/
+			ftp.makeDir("sunlight");
 		}
+        */
 
 	}
 

@@ -9,7 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,64 +20,82 @@ import org.jsoup.select.Elements;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import org.ini4j.Ini;
 
 public class Sunlight implements IStore {
-    String category = "";
-    final String siteName;
-    final String databaseName;
     static Logger logger = LogManager.getLogger(Sunlight.class.getName());
     static int timeout = 30000; // ms
-    int productid = 0;
-    Ini.Section settings;
+
+    final Ini.Section settings;
+
+    private Database db;
+    private final String name = "Sunlight";
 
     public Sunlight() throws IOException {
         Ini ini = new Ini(new File("stores.ini"));
         settings = ini.get("Sunlight");
-
-        siteName = settings.get("url");
-        databaseName = settings.get("database");
     }
 
     // IStore
-    public Product parsePage(String article, String name, String url) throws Exception {
+    public Database getDatabase() {
+        return db;
+    }
+
+    public String getShopName() {
+        return name;
+    }
+
+    public Product parsePage(String article,
+                             String name,
+                             String url,
+                             String category) throws MalformedURLException,
+                                                     IOException {
         logger.info("*** Parsing page {}", url);
-        Product product = new Product();
+        Product product = new Product(this);
 
         product.article = article;
         product.name = name;
         product.url = url;
+        product.category = category;
         logger.info("Setting name: {}", name);
         logger.info("Setting article: {}", article);
         logger.info("Setting url: {}", url);
+        logger.info("Setting category: {}", category);
         int count = -1;
 
         Document doc = Jsoup.connect(url).timeout(timeout).get();
         Element price = doc.getElementsByClass("price").get(0);
-        String newPrice = "";
-        String oldPrice="";
+        String newPriceStr = "";
+        String oldPriceStr = "";
 
         try {
-            newPrice = price.getElementsByTag("span").get(0).text();
+            newPriceStr = price.getElementsByTag("span").get(0).text();
+            count = 1;
         } catch (Exception e) {
-            newPrice = "";
+            newPriceStr = "";
             count = 0;
         }
 
         try {
-            oldPrice = price.getElementsByTag("s").get(0).text();
-            newPrice = newPrice.substring(0, newPrice.length() - 1);
+            oldPriceStr = price.getElementsByTag("s").get(0).text();
+            newPriceStr = newPriceStr.substring(0, newPriceStr.length() - 1);
         } catch (Exception e) {
-            oldPrice = "";
+            oldPriceStr = "";
         }
+
+        int newPrice = parsePrice(newPriceStr);
+        int oldPrice = parsePrice(oldPriceStr);
 
         logger.info("Setting count: {}", count);
         logger.info("Setting newPrice: {}", newPrice);
         logger.info("Setting oldPrice: {}", oldPrice);
-        product.count = String.valueOf(count);
+        product.count = count;
         product.price = newPrice;
-        product.old_price = oldPrice;
+        product.oldPrice = oldPrice;
 
+        // parse description
         Element detail = doc.getElementsByClass("detail_info").get(0);
         String[] description = detail.getElementsByClass("text").get(1).html().split("<br />");
 
@@ -87,23 +106,27 @@ public class Sunlight implements IStore {
             String part = parts[0].toLowerCase().trim();
             String value = parts[1].toLowerCase().trim();
 
-            if (part.contains("тип")) {
-                logger.info("Setting category: {}", value);
-                product.category = value;
-
-            } else if (part.contains("металл") &&
-                      !part.contains("цвет")) {
-                logger.info("Setting material: {}", value);
+            if (part.contains("металл") &&
+                !part.contains("цвет")) {
+                value = WordUtils.capitalize(value);
                 product.material = value;
+                logger.info("Setting material: {}", value);
 
-            } else if(part.contains("вес изделия")) {
-                logger.info("Settings weight: {}", value);
-                product.weight = value;
+            } else if (part.contains("вес изделия")) {
+                int weight = parseWeight(value);
+                logger.info("Settings weight: {}", weight);
+                product.weight = weight;
 
-            } else if(part.contains("проба")) {
-                logger.info("Settings material: {}", value);
-                product.proba = value;
+            } else if (part.contains("проба")) {
+                int proba = Integer.parseInt(value);
+                logger.info("Settings material: {}", proba);
+                product.proba = proba;
             }
+        }
+
+        // Doesn't parse the lost fields if it needs just to update
+        if (product.exist()) {
+            return product;
         }
 
         Element imgElement = doc.getElementsByClass("smallPics").first();
@@ -137,6 +160,7 @@ public class Sunlight implements IStore {
     }
 	
 	public void parse() throws Exception {
+        db = new Database();
         String[] categories = settings.get("categories").split(",");
 
         for (Iterator<String> i = Arrays.asList(categories).iterator(); i.hasNext(); ) {
@@ -145,7 +169,7 @@ public class Sunlight implements IStore {
             int id = Integer.parseInt(i.next());
             int pages;
 
-            String url = String.format("%s/catalog/?product_type=%d", siteName, id);
+            String url = String.format("%s/catalog/?product_type=%d", settings.get("url"), id);
             logger.info("{}: {}", getCategoryName(id), url);
             logger.info("Started..");
 
@@ -160,8 +184,6 @@ public class Sunlight implements IStore {
                 continue;
             }
 
-            //Database database = new Database();
-			
             int page = 0;
             while (page < pages) {
                 String pageUrl = String.format("%s&page=%d", url, page);
@@ -183,11 +205,21 @@ public class Sunlight implements IStore {
                     String path = li.getElementsByTag("a").get(0).attr("href");
 
                     try {
-                        Product product = parsePage(article, name, siteName + path);
-                        //database.save(product);
+                        Product product = parsePage(article, name, settings.get("url") + path, getCategoryName(id));
+                        if (product.exist()) {
+                            boolean updated = product.update(); 
+                            if (updated) {
+                                logger.info("Update existed product");
+                            } else {
+                                logger.info("Skip existed product");
+                            }
+                        } else {
+                            logger.info("New product");
+                            product.save();
+                        }
                         count++;
                     } catch (Exception e) {
-                        logger.error("Error IStore.parsePage: {}", e.getMessage());
+                        logger.error("Exception IStore.parsePage: {}", e.getLocalizedMessage());
                         errors++;
                     }
                 }
@@ -200,7 +232,32 @@ public class Sunlight implements IStore {
             logger.info("Finished");
             //Parser.ftp.saveFile(category, database.sql_query);
         }
+        db.release();
 	}
+
+    // from "1 200 р." to 1200
+    int parsePrice(String price) {
+        Pattern p = Pattern.compile("\\D");
+        Matcher m = p.matcher(price);
+
+        price = m.replaceAll("");
+        if (price == "")
+            return 0;
+
+        return Integer.parseInt(price);
+    }
+
+    int parseWeight(String weight) {
+        Pattern p = Pattern.compile("\\D");
+        Matcher m = p.matcher(weight);
+
+        weight = m.replaceAll("");
+        if (weight == "")
+            return -1;
+
+        return Integer.parseInt(weight);
+
+    }
 
     String getCategoryName(int id) throws Exception {
         switch (id) {

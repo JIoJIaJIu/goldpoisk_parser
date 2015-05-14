@@ -3,35 +3,57 @@ package goldpoisk_parser;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-public class Product{
-	
-	String article = "";
-	String name = "";
-	String material = "";
-	String category = "";
-	String weight = "";
-	String url = "";
-	String proba = "";
-	String type = "";
+import javax.persistence.*;
+
+import com.goldpoisk.parser.orm.Item;
+import com.goldpoisk.parser.orm.UpdatedValue;
+
+@Entity
+@Table(name="goldpoisk_entity")
+public class Product {
+    @Id
+    Integer id;
+	String article;
+	String name;
+	String material;
+	String category;
+	String url;
+	String type;
+	int proba;
+	int price;
+	int oldPrice;
+	int weight;
+	String description;
+	String discount;
+	int count = -1;
+
+    @Transient
+    String shopName;
+/*
+	ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
+
 	ArrayList<String> kamni = new ArrayList<String>();
 	ArrayList<String> kamniColor = new ArrayList<String>();
 	ArrayList<String> kamniWeight = new ArrayList<String>();
 	ArrayList<String> kamniSize = new ArrayList<String>();
-	ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
-	String price = "";;
-	String description = "";
-	String old_price = "";
-	String discount = "";
-	String count = "-1";
 	
 	String watch_material = "";
 	String watch_material_body = "";
 	String watch_glass = "";
 	String watch_type = "";
 	String watch_mechanic = "";
-	
-	public Product() {}
-	
+    */
+
+    @Transient
+    private final Database db;
+    private static GoldpoiskDatabase goldpoiskDb = Parser.goldpoiskDb;
+
+    public Product(IStore shop) {
+        this.shopName = shop.getShopName();
+        db = shop.getDatabase();
+    }
+    /*
+
 	public void addKamni(String kamen) {
 		kamni.add(kamen);
 	}
@@ -47,29 +69,38 @@ public class Product{
 	public void addKamniSize(String kamen) {
 		kamniSize.add(kamen);
 	}
+    */
 	
 	public void addImage(ByteArrayOutputStream image) {
-		images.add(image);
+	//	images.add(image);
 	}
-	
-	
-	
-	boolean exist(String article) {
-		boolean result = false;
-		
-		return result;
-	}
-	
-	boolean save(Product product) {
-		boolean result = false;
-		Parser.database.save(product);
-		return result;
-	}
-	
-	boolean update(Product product) {
-		boolean result = false;
-		Parser.database.update(product);
-		return result;
-	}
-	
+
+    public boolean exist() {
+        return this.goldpoiskDb.existProduct(article, shopName);
+    }
+
+    public boolean update() {
+        Item model = this.goldpoiskDb.getProduct(article, shopName);
+        boolean isUpdated = false;
+        if (model == null) {
+            return isUpdated;
+        }
+
+        if (model.price != price) {
+            UpdatedValue updateModel = new UpdatedValue(article, "price", price + "");
+            db.save(updateModel);
+            isUpdated = true;
+        }
+
+        if (model.count != count) {
+            UpdatedValue updateModel = new UpdatedValue(article, "count", count + "");
+            db.save(updateModel);
+            isUpdated = true;
+        }
+
+        return isUpdated;
+    }
+
+    public void save() {
+    }
 }
