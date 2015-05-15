@@ -160,7 +160,7 @@ public class Sunlight implements IStore {
     }
 	
 	public void parse() throws Exception {
-        db = new Database();
+        db = new Database(name);
         String[] categories = settings.get("categories").split(",");
 
         for (Iterator<String> i = Arrays.asList(categories).iterator(); i.hasNext(); ) {

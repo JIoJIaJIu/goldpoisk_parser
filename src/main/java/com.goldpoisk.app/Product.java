@@ -11,7 +11,7 @@ import com.goldpoisk.parser.orm.UpdatedValue;
 @Entity
 @Table(name="goldpoisk_entity")
 public class Product {
-    @Id
+    @Id @GeneratedValue
     Integer id;
 	String article;
 	String name;
@@ -29,9 +29,10 @@ public class Product {
 
     @Transient
     String shopName;
-/*
+    @Transient
 	ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
 
+    /*
 	ArrayList<String> kamni = new ArrayList<String>();
 	ArrayList<String> kamniColor = new ArrayList<String>();
 	ArrayList<String> kamniWeight = new ArrayList<String>();
@@ -52,8 +53,8 @@ public class Product {
         this.shopName = shop.getShopName();
         db = shop.getDatabase();
     }
-    /*
 
+    /*
 	public void addKamni(String kamen) {
 		kamni.add(kamen);
 	}
@@ -72,7 +73,7 @@ public class Product {
     */
 	
 	public void addImage(ByteArrayOutputStream image) {
-	//	images.add(image);
+		images.add(image);
 	}
 
     public boolean exist() {
@@ -102,5 +103,6 @@ public class Product {
     }
 
     public void save() {
+        db.save(this);
     }
 }

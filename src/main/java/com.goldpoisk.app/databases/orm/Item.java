@@ -11,7 +11,7 @@ public class Item {
     Integer id;
     @Column(name="cost")
     public Integer price;
-    @Column(name="quanity")
+    @Column(name="quantity")
     public Integer count;
 
     @ManyToOne
