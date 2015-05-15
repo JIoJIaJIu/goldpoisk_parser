@@ -10,10 +10,12 @@ public class UpdatedValue {
     String article;
     String fieldName;
     String fieldValue;
+    String category;
 
-    public UpdatedValue(String article, String fieldName, String fieldValue) {
+    public UpdatedValue(String article, String fieldName, String fieldValue, String category) {
         this.article = article;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
+        this.category = category;
     }
 }
