@@ -1,6 +1,8 @@
 *.sw?
+*.pyc
 target/**
 .classpath
 .project
 .settings/**
 /target
+log.out
