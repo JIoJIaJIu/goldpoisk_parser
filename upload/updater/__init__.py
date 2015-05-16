@@ -34,6 +34,14 @@ class Database(object):
     def get_infos(self):
         return self.execute("SELECT * FROM info WHERE parsed IS NULL")
 
+    def set_parsed(self, schema):
+        sql = "UPDATE info set parsed=true WHERE schema='%s'" % schema
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
+        self.connection.commit()
+        cursor.close()
+
+
 class Updater(object):
     def __init__(self, db, info):
         self.logger = Logger("Updater")
