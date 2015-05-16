@@ -15,8 +15,8 @@ public class Parser {
     //final Ftp ftp;
     static GoldpoiskDatabase goldpoiskDb;
 
-	public Parser() throws IOException {
-        config = new Config();
+	public Parser(String configName) throws IOException {
+        config = new Config(configName);
         Section cfg = config.get("package");
         logger.info("Parser: {}", cfg.get("name"));
         logger.info("Version: {}", cfg.get("version"));
@@ -38,6 +38,6 @@ public class Parser {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		Parser parser = new Parser();
+		Parser parser = new Parser(args[0]);
 	}
 }

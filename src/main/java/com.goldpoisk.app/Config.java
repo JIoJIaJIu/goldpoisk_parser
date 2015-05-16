@@ -9,8 +9,8 @@ import org.ini4j.Profile.Section;
 public class Config {
 	Wini ini = null;
 	
-	public Config() throws IOException {
-        File file = new File("development.ini");
+	public Config(String configName) throws IOException {
+        File file = new File(configName);
         ini = new Wini(file);
 	}
 
