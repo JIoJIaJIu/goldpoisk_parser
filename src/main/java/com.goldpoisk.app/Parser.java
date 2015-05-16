@@ -12,7 +12,6 @@ public class Parser {
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
     static Config config;
-    //final Ftp ftp;
     static GoldpoiskDatabase goldpoiskDb;
 
 	public Parser(String configName) throws IOException {
@@ -26,15 +25,6 @@ public class Parser {
         try {
             sunlight.parse();
         } catch (Exception e) {}
-
-        /*
-        ftp = new Ftp(config.ftpUrl,config.ftpLogin,config.ftpPassword);
-		if (ftp.connect()) {
-			 logger.info("Successfully connect to FTP");
-			ftp.makeDir("sunlight");
-		}
-        */
-
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
