@@ -1,13 +1,10 @@
-﻿# Goldpoisk Parser
+﻿# Goldpoisk Parser v0.3.1
 
-v0.3.0
+## Сленг
+* `parser`(`парсер`) - парсер на Java
+* `uploader`(`аплоадер`) - аплоадер в db на Python
 
-### Установка
-* `mvn package`
+[Установка](docs/INSTALL.md)
 
 ### Запуск
 * `./run.sh`
-
-### Зависимости
-* [Maven](http://maven.apache.org/index.html)
-* > JDK 1.7
