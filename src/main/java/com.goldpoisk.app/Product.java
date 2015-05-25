@@ -88,13 +88,13 @@ public class Product {
         }
 
         if (model.price != price) {
-            UpdatedValue updateModel = new UpdatedValue(article, "price", price + "", category);
+            UpdatedValue updateModel = new UpdatedValue(article, "price", String.valueOf(price), category);
             db.save(updateModel);
             isUpdated = true;
         }
 
         if (model.count != count) {
-            UpdatedValue updateModel = new UpdatedValue(article, "count", count + "", category);
+            UpdatedValue updateModel = new UpdatedValue(article, "count", String.valueOf(count), category);
             db.save(updateModel);
             isUpdated = true;
         }
