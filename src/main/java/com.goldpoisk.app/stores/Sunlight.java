@@ -27,7 +27,6 @@ import org.ini4j.Ini;
 public class Sunlight implements IStore {
     static Logger logger = LogManager.getLogger(Sunlight.class.getName());
     static int timeout = 30000; // ms
-
     final Ini.Section settings;
 
     private Database db;
@@ -158,7 +157,7 @@ public class Sunlight implements IStore {
 
         return blob;
     }
-	
+
 	public void parse() throws Exception {
         db = new Database(name);
         String[] categories = settings.get("categories").split(",");
@@ -207,7 +206,7 @@ public class Sunlight implements IStore {
                     try {
                         Product product = parsePage(article, name, settings.get("url") + path, getCategoryName(id));
                         if (product.exist()) {
-                            boolean updated = product.update(); 
+                            boolean updated = product.update();
                             if (updated) {
                                 logger.info("Update existed product");
                             } else {

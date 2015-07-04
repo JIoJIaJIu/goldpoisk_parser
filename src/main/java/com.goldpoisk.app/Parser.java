@@ -8,6 +8,8 @@ import org.ini4j.Profile.Section;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.goldpoisk.parser.store.gold585.Gold585;
+
 public class Parser {
     static Logger logger = LogManager.getLogger(Parser.class.getName());
 
@@ -20,12 +22,10 @@ public class Parser {
         logger.info("Parser: {}", cfg.get("name"));
         logger.info("Version: {}", cfg.get("version"));
         goldpoiskDb = new GoldpoiskDatabase();
-        
         Gold585 gold585 = new Gold585();
         try {
             gold585.parse();
         } catch (Exception e) {}
-        
         /*Sunlight sunlight = new Sunlight();
         try {
             sunlight.parse();

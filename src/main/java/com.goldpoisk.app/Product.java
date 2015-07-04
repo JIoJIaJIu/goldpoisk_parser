@@ -1,4 +1,4 @@
-package goldpoisk_parser;
+ackage goldpoisk_parser;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -28,22 +28,11 @@ public class Product {
 	int count = -1;
 
     @Transient
-    String shopName;
+    private String shopName;
     @Transient
-	ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
-
-    /*
-	ArrayList<String> kamni = new ArrayList<String>();
-	ArrayList<String> kamniColor = new ArrayList<String>();
-	ArrayList<String> kamniWeight = new ArrayList<String>();
-	ArrayList<String> kamniSize = new ArrayList<String>();
-	
-	String watch_material = "";
-	String watch_material_body = "";
-	String watch_glass = "";
-	String watch_type = "";
-	String watch_mechanic = "";
-    */
+	private ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
+    @Transient
+    private ArrayList<Gem> gems = new ArrayList<Gem>();
 
     @Transient
     private final Database db;
@@ -54,6 +43,7 @@ public class Product {
         db = shop.getDatabase();
     }
 
+    public void addGem();
     /*
 	public void addKamni(String kamen) {
 		kamni.add(kamen);
