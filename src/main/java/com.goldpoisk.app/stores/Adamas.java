@@ -27,8 +27,8 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class Valtera implements IStore {
-    static Logger logger = LogManager.getLogger(Valtera.class.getName());
+public class Adamas implements IStore {
+    static Logger logger = LogManager.getLogger(Adamas.class.getName());
     
     static int timeout = 30000;
     
@@ -38,9 +38,9 @@ public class Valtera implements IStore {
     final Ini.Section settings;
     
     private Database db;
-    private final String name = "Valtera";
+    String name = "Adamas";
     
-    public Valtera() throws IOException {
+    public Adamas () throws IOException {
         Ini ini = new Ini(new File("stores.ini"));
         settings = ini.get("Valtera");
     }
@@ -54,7 +54,7 @@ public class Valtera implements IStore {
         return name;
     }
     
-    String parseDescription(HtmlElement item) {
+    String parseDescription (HtmlElement item) {
         String string = "";
         
         try {
@@ -66,7 +66,7 @@ public class Valtera implements IStore {
         return string;
     }
     
-    String parseUrl(HtmlElement item) {
+    String parseUrl (HtmlElement item) {
         String string = "";
         
         try {
@@ -82,51 +82,65 @@ public class Valtera implements IStore {
         String string = "";
         
         try {
-            string = item.getElementsByAttribute("meta" ,"itemprop", "name")
+            string = item.getElementsByAttribute("div" ,"id", "cat_elem_right")
                          .get(0)
-                         .getAttribute("content");
+                         .getElementsByTagName("h1")
+                         .get(0)
+                         .getTextContent().trim();
         } catch (Exception e) {}
         
         return string;
     }
     
-    String parseArticle(HtmlElement item) {
+    String parseArticle (HtmlElement item) {
         String string = "";
         
         try {
-            string = item.getElementsByAttribute("i", "class", "hidden-xs")
+            string = item.getElementsByAttribute("span", "itemprop", "name")
                          .get(0)
                          .getTextContent();
         } catch (Exception e) {}
 
-        return string.equals("") ? "" : string.split("\\.")[1];
+        return string;
     }
     
-    int parsePrice(HtmlElement item) {
+    int parsePrice (HtmlElement item) {
         String string = "";
         
         try {
-            string = item.getElementsByAttribute("meta", "itemprop", "price")
-                         .get(0)
-                         .getAttribute("content");
-        } catch (Exception e) {}
-        
-        if (string.equals(""))
-            return 0;
-        
-        return Integer.parseInt(string);
-    }
-    
-    int parseOldPrice(HtmlElement item) {
-        String string = "";
-        
-        try {
-            string = item.getElementsByAttribute("p", "class", "catalog_item_old-price")
+            string = item.getElementsByAttribute("span", "itemprop", "price")
                          .get(0)
                          .getTextContent();
-            Pattern p = Pattern.compile("\\D");
-            Matcher m = p.matcher(string);
-            string = m.replaceAll("");
+        } catch (Exception e) {}
+        
+        string = string.replaceAll(" ", "");
+        
+        if (string.equals("")) {
+            try {
+                string = item.getElementsByAttribute("p", "class", "cat_cena")
+                             .get(0)
+                             .getTextContent();
+            } catch (Exception e) {}
+            
+            string = string.replaceAll(" ", "");
+        }
+        
+        if (string.equals(""))
+            return 0;
+        
+        return Integer.parseInt(string);
+    }
+    
+    int parseOldPrice (HtmlElement item) {
+        String string = "";
+        
+        try {
+            string = item.getElementsByAttribute("span", "class", "old-price")
+                         .get(0)
+                         .getTextContent();
+            String[] tempString = string.split("\\s+");
+            String[] floorPrice = tempString[0].split("\\.");
+            string = floorPrice[0];
         } catch (Exception e) {}
         
         if (string.equals(""))
@@ -135,33 +149,35 @@ public class Valtera implements IStore {
         return Integer.parseInt(string);
     }
     
-    String parseMaterial(HtmlElement item) {
+    String parseMaterial (HtmlElement item) {
         String string = "";
         
         try {
-            string = item.getElementsByAttribute("div", "class", "description pull-right col-md-4 col-xs-12")
+            string = item.getElementsByAttribute("div", "class", "tabdiv")
                          .get(0)
-                         .getElementsByTagName("h1")
+                         .getElementsByTagName("p")
                          .get(0)
-                         .asXml();
-            string = string.split("<br/>")[1].trim();
+                         .getElementsByAttribute("span", "class", "col999")
+                         .get(0)
+                         .getTextContent();
         } catch (Exception e) {}
         
         return string;
     }
     
-    int parseWeight(HtmlElement item) {
+    float parseWeight (HtmlElement item) {
         String weight = "";
-        int w = -1;
+        float w = -1;
         
         try {
-            weight = item.getElementsByAttribute("ul", "class", "stoneList list-unstyled").get(0)
-                         .getElementsByTagName("li")
-                         .get(1)
-                         .getTextContent()
-                         .split(" ")[1];
-            weight = String.valueOf(weight.charAt(0));//Why is weight int?
-            w = Integer.parseInt(weight);
+            weight = item.getElementsByAttribute("div", "class", "tabdiv")
+                    .get(0)
+                    .getElementsByTagName("p")
+                    .get(1)
+                    .getElementsByAttribute("span", "class", "col999")
+                    .get(0)
+                    .getTextContent();
+            w = Float.parseFloat(weight);
         } catch (Exception e) { 
             w = -1;
         }
@@ -169,7 +185,7 @@ public class Valtera implements IStore {
         return w;
     }
     
-    String parseDetailedDescription(HtmlElement item) {
+    String parseDetailedDescription (HtmlElement item) {
         String description = "";
         
         try {
@@ -183,7 +199,7 @@ public class Valtera implements IStore {
         return description;
     }
     
-    public ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
+    public ByteArrayOutputStream loadImage (String url) throws MalformedURLException,
                                                               IOException {
         logger.info("Loading image {}", url);
         
@@ -201,38 +217,50 @@ public class Valtera implements IStore {
         return blob;
     }
     
-    void parseImages(HtmlElement body, Product product) {
+    void parseImages (HtmlElement body, Product product) {
         try {
-            String imageUrl = body.getElementsByAttribute("div", "class", "bigImg pull-left col-md-8 col-xs-12")
-                                  .get(0).getElementsByTagName("a")
-                                  .get(0)
-                                  .getElementsByTagName("img")
-                                  .get(0)
-                                  .getAttribute("src");
-            product.addImage(loadImage(settings.get("url") + imageUrl));
+            DomNodeList<HtmlElement> imagesDom = body.getElementsByAttribute("div", "class", "scroll-img")
+                                                     .get(0)
+                                                     .getElementsByTagName("a")
+                                                     .get(0)
+                                                     .getElementsByTagName("img");
+            for (int i = 0; i < imagesDom.size(); i++) {
+                String imageUrl = imagesDom.get(i)
+                                           .getAttribute("src");
+                Pattern p = Pattern.compile("/resize/80x0x80x0x100");
+                Matcher m = p.matcher(imageUrl);
+                imageUrl = m.replaceAll("");
+                product.addImage(loadImage(settings.get("url") + imageUrl));
+            }
         } catch(Exception e) {}
     }
     
-    String getCategoryName(String category) throws Exception {
+    String getCategoryName (String category) throws Exception {
         switch (category.trim().toLowerCase()) {
-            case "earrings":
+            case "sergi":
                 return "Серьги";
-            case "rings":
+            case "kolca":
                 return "Кольца";
-            case "pendant":
+            case "sergipuseti":
+                return "Серьги";
+            case "sergikongo":
+                return "Серьги";
+            case "podveski":
                 return "Подвески";
-            case "bracelets":
+            case "brasleti":
                 return "Браслеты";
-            case "chains":
+            case "cepi":
                 return "Цепи";
-            case "necklace":
+            case "kolie":
                 return "Колье";
+            case "obruchalniekolca":
+                return "Кольца";
             default:
                 throw new Exception("Wrong category  " + category);
         }
     }
     
-    public Product parsePage(String article,
+    public Product parsePage (String article,
             String name,
             String url,
             String category) throws FailingHttpStatusCodeException, 
@@ -246,20 +274,22 @@ public class Valtera implements IStore {
         HtmlPage page = webClient.getPage(url);
         HtmlElement body = page.getBody();
         
-        product.article = article;
-        product.name = name;
         product.url = url;
+        product.article = parseArticle(body);
+        product.price = parsePrice(body);
+        product.oldPrice = parseOldPrice(body);
+        product.name = parseName(body);
+        product.material = parseMaterial(body);
+        product.weight = parseWeight(body);
         product.category = category;
+        product.description = "";
+        
+        product.count = -1;
         
         logger.info("Setting name: {}", product.name);
         logger.info("Setting article: {}", product.article);
         logger.info("Setting url: {}", product.url);
         logger.info("Setting category: {}", product.type);
-        
-        product.material = parseMaterial(body);
-        product.weight = parseWeight(body);
-        product.description = parseDetailedDescription(body);
-        product.count = -1;
         
         // Doesn't parse the lost fields if it needs just to update
         if (product.exist()) {
@@ -271,93 +301,76 @@ public class Valtera implements IStore {
         return product;
     }
     
-    public void parse() {
+    public void parse () {
         
         int errors = 0;
         int count = 0;
         
-        String[] categories;
-        String[] categoriesLink;
-        
-        categories = settings.get("categories").split(",");
-        categoriesLink = settings.get("categoriesLink").split(",");
+        String[] categories = settings.get("categories").split(",");
+        String siteUrl = settings.get("url");
         
         if (!createWebClient())
             return;
         
         for (int index = 0; index < categories.length; index ++) {
-            String url = String.format("%s/catalogue/%s.html", settings.get("url"), categories[index]);
+            String url = String.format("%s/catalog/%s", siteUrl, categories[index]);
             
             try {
                 HtmlPage page = processWebPage(url);
-                DomElement navigation = page.getFirstByXPath("//ul[@class='pagination pagination-sm']");
-                DomNodeList<HtmlElement> pages = navigation.getElementsByTagName("li");
                 
                 int id = 1;
-                int totalPages = Integer.parseInt(pages.get(pages.size()-2).getTextContent().trim());
-                
-                while (id <= totalPages) {
-                    url = String.format("%s/catalogue/search/?type=%s&page=%d", settings.get("url"), categoriesLink[index], id);
-                    page = processWebPage(url);
-                    DomElement divs = page.getFirstByXPath("//div[@class='catalog col-md-9 col-sm-9 col-xs-12']");
-                    DomNodeList<HtmlElement> items = divs.getElementsByTagName("div");
-                    for (int i = 0; i < items.size(); i ++) {
-                        if (items.get(i).getAttribute("itemprop").equals("itemListElement")) {
-                            String article = parseArticle(items.get(i));
-                            String itemUrl = parseUrl(items.get(i));
-                            String name = parseName(items.get(i));
-                            
-                            int price = parsePrice(items.get(i));
-                            int oldPrice = parseOldPrice(items.get(i));
-                            
-                            try {
-                                Product product = parsePage(article, name, itemUrl, getCategoryName(categories[index]));
-                                product.price = price;
-                                product.oldPrice = oldPrice;
-                                
-                                logger.info("Setting newPrice: {}", product.price);
-                                logger.info("Setting oldPrice: {}", product.oldPrice);
-                                
-                                if (product.exist()) {
-                                    boolean updated = product.update(); 
-                                    if (updated) {
-                                        logger.info("Update existed product");
-                                    } else {
-                                        logger.info("Skip existed product");
-                                    }
+                int tagA = 5;
+                while (tagA >= 5) {
+                    String page_url = String.format("%s/?PAGEN_6=%d", url, id);
+                    page = processWebPage(page_url);
+                    
+                    DomElement navigation = page.getFirstByXPath("//div[@class='pager']");
+                    tagA = navigation.getElementsByTagName("a").size();
+                    
+                    DomElement catalog = page.getElementById("catalog");
+                    DomNodeList<HtmlElement> products = catalog.getElementsByTagName("li");
+                    
+                    for (int i = 0; i < products.size(); i ++) {
+                        try {
+                            String productUrl = siteUrl + products.get(i).getElementsByTagName("a").get(0).getAttribute("href");
+                            Product product = parsePage("", "", productUrl, getCategoryName(categories[index]));
+                            if (product.exist()) {
+                                boolean updated = product.update(); 
+                                if (updated) {
+                                    logger.info("Update existed product");
                                 } else {
-                                    logger.info("New product");
-                                    product.save();
+                                    logger.info("Skip existed product");
                                 }
-                                
-                                count++;
-                            } catch (Exception e) {
-                                logger.error("Exception IStore.parsePage: {}", e.getLocalizedMessage());
-                                errors++;
+                            } else {
+                                logger.info("New product");
+                                product.save();
                             }
-                            
+                        } catch (Exception e) {
+                            logger.error("Exception IStore.parsePage: {}", e.getLocalizedMessage());
+                            errors++;
                         }
                     }
                     id ++;
                 }
+                id = id -1;
                 logger.info("{}: {}", categories[index], url);
                 logger.info("Successful: {}", count);
                 logger.info("Errors: {}", errors);
                 logger.info("Finished");
-            } catch (Exception e) {}
+            } catch (Exception e) { e.printStackTrace(); }
         }
     }
     
-    private boolean createWebClient() {
+    private boolean createWebClient () {
         boolean result = false;
         webClient = new WebClient(browserVersion);
         
         try {
             webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
             webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.getOptions().setJavaScriptEnabled(true);
+            webClient.getOptions().setJavaScriptEnabled(false);
             webClient.getOptions().setCssEnabled(false);
-            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            //webClient.setAjaxController(new NicelyResynchronizingAjaxController());
             result = true;
         } catch (Exception e) { 
             logger.error("Couldn't create WebClient: {}", e.getMessage());
@@ -366,7 +379,7 @@ public class Valtera implements IStore {
         return result;
     }
     
-    private HtmlPage processWebPage(String url) {
+    private HtmlPage processWebPage (String url) {
         WebRequest request = null;
         HtmlPage page = null;
         
