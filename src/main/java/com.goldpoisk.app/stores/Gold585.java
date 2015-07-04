@@ -312,7 +312,7 @@ public class Gold585 implements IStore {
         int n;
         
         while ( (n = image.read(byteChunk)) > 0 ) {
-        blob.write(byteChunk, 0, n);
+            blob.write(byteChunk, 0, n);
         }
         
         return blob;
@@ -362,9 +362,7 @@ public class Gold585 implements IStore {
                     logger.info("Errors: {}", errors);
                     logger.info("Finished");
                 }
-            } catch(Exception e) {
-               
-            }
+            } catch(Exception e) {}
         }
     }
 }
