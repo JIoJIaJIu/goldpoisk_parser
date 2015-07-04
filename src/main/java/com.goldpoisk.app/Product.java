@@ -22,7 +22,7 @@ public class Product {
 	int proba;
 	int price;
 	int oldPrice;
-	int weight;
+	Float weight;
 	String description;
 	String discount;
 	int count = -1;
@@ -30,20 +30,21 @@ public class Product {
     @Transient
     private String shopName;
     @Transient
-	private ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
-    @Transient
     private ArrayList<Gem> gems = new ArrayList<Gem>();
 
     @Transient
     private final Database db;
     private static GoldpoiskDatabase goldpoiskDb = Parser.goldpoiskDb;
 
+    @Transient
+	public ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
+
     public Product(IStore shop) {
         this.shopName = shop.getShopName();
         db = shop.getDatabase();
     }
 
-    public void addGem();
+    public void addGem() {};
     /*
 	public void addKamni(String kamen) {
 		kamni.add(kamen);

@@ -112,7 +112,7 @@ public class Sunlight implements IStore {
                 logger.info("Setting material: {}", value);
 
             } else if (part.contains("вес изделия")) {
-                int weight = parseWeight(value);
+                Float weight = parseWeight(value);
                 logger.info("Settings weight: {}", weight);
                 product.weight = weight;
 
@@ -246,15 +246,15 @@ public class Sunlight implements IStore {
         return Integer.parseInt(price);
     }
 
-    int parseWeight(String weight) {
+    Float parseWeight(String weight) {
         Pattern p = Pattern.compile("\\D");
         Matcher m = p.matcher(weight);
 
         weight = m.replaceAll("");
         if (weight == "")
-            return -1;
+            return new Float(-1);
 
-        return Integer.parseInt(weight);
+        return Float.parseFloat(weight);
 
     }
 

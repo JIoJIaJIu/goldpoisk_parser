@@ -10,7 +10,7 @@ public class Gem {
     String name;
     Float weight;
 
-    public Gem(String name, Integer weight) {
+    public Gem(String name, Float weight) {
         this.name = name;
         this.weight = weight;
     }

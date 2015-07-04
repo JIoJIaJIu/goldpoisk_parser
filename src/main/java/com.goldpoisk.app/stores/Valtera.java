@@ -149,11 +149,11 @@ public class Valtera implements IStore {
         
         return string;
     }
-    
-    int parseWeight(HtmlElement item) {
+
+    Float parseWeight(HtmlElement item) {
         String weight = "";
-        int w = -1;
-        
+        Float w = new Float(-1);
+
         try {
             weight = item.getElementsByAttribute("ul", "class", "stoneList list-unstyled").get(0)
                          .getElementsByTagName("li")
@@ -161,14 +161,14 @@ public class Valtera implements IStore {
                          .getTextContent()
                          .split(" ")[1];
             weight = String.valueOf(weight.charAt(0));//Why is weight int?
-            w = Integer.parseInt(weight);
-        } catch (Exception e) { 
-            w = -1;
+            w = Float.parseFloat(weight);
+        } catch (Exception e) {
+            w = new Float(-1);
         }
-        
+
         return w;
     }
-    
+
     String parseDetailedDescription(HtmlElement item) {
         String description = "";
         

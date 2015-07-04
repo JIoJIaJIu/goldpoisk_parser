@@ -276,15 +276,15 @@ public class Gold585 implements IStore {
         return name;
     }
     
-    int parseWeight(String weight) {
+    Float parseWeight(String weight) {
         Pattern p = Pattern.compile("\\D");
         Matcher m = p.matcher(weight);
 
         weight = m.replaceAll("");
         if (weight == "")
-            return -1;
+            return new Float(-1);
 
-        return Integer.parseInt(weight);
+        return Float.parseFloat(weight);
     }
     
     String parseArticle(DomElement elementArticle) {
