@@ -201,9 +201,7 @@ public class Valtera implements IStore {
         return blob;
     }
     
-    ArrayList<ByteArrayOutputStream> parseImages(HtmlElement body) {
-        ArrayList<ByteArrayOutputStream> images = new ArrayList<ByteArrayOutputStream>();
-        
+    void parseImages(HtmlElement body, Product product) {
         try {
             String imageUrl = body.getElementsByAttribute("div", "class", "bigImg pull-left col-md-8 col-xs-12")
                                   .get(0).getElementsByTagName("a")
@@ -211,10 +209,8 @@ public class Valtera implements IStore {
                                   .getElementsByTagName("img")
                                   .get(0)
                                   .getAttribute("src");
-            images.add(loadImage(settings.get("url") + imageUrl));
+            product.addImage(loadImage(settings.get("url") + imageUrl));
         } catch(Exception e) {}
-        
-        return images;
     }
     
     String getCategoryName(String category) throws Exception {
@@ -270,7 +266,7 @@ public class Valtera implements IStore {
             return product;
         }
         
-        product.images = parseImages(body);
+        parseImages(body, product);
         
         return product;
     }
