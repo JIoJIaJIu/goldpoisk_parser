@@ -21,24 +21,22 @@ public class Parser {
         logger.info("Parser: {}", cfg.get("name"));
         logger.info("Version: {}", cfg.get("version"));
         goldpoiskDb = new GoldpoiskDatabase();
-        
+
         Adamas adamas = new Adamas();
         try {
             adamas.parse();
         } catch (Exception e) {}
-        
         /*Gold585 gold585 = new Gold585();
         try {
             gold585.parse();
         } catch (Exception e) {}*/
-        
         /*Sunlight sunlight = new Sunlight();
         try {
             sunlight.parse();
         } catch (Exception e) {}*/
 	}
 
-	public static void main(String[] args) throws FileNotFoundException, IOException {
-		Parser parser = new Parser(args[0]);
-	}
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        Parser parser = new Parser(args[0]);
+    }
 }

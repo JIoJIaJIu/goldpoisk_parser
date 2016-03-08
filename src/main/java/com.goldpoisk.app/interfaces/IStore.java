@@ -9,10 +9,6 @@ public interface IStore {
     String getShopName();
     ByteArrayOutputStream loadImage(String url) throws MalformedURLException,
                                                        IOException;
-                                                       /*
-    public Product parsePage(String url, String category) throws MalformedURLException,
-                                                                 IOException;
-                                                                 */
     public Product parsePage(String article,
                              String name,
                              String url,
